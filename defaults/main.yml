@@ -1,0 +1,28 @@
+---
+# defaults file for ansible-role-proxmox-create-lxc/
+# typical variables to define for a container (in host_vars/inventory_hostname, for ex)
+
+node: my_node
+api_host: my_node.my_cluster.org
+api_user: deploy@pam
+## better put this in a vautl, ex host_vars/inventory_hostname/vault/main.yml
+## we have to find a way to define node_deploy_password as node[hostname]/deploy_password
+node_deploy_password: D3pl0y_pwd
+url_ostemplate: http://download.proxmox.com/images/system/debian-9.0-standard_9.5-1_amd64.tar.gz
+cores: 1
+storage: local-lvm
+disk: 30
+netif_name: eth0
+# esta variable puede estar definida o no
+# this variable may be defined or not
+#netif_hwaddr: 52:54:00:00:a3:a0
+netif_gw: 192.168.33.1
+# Do define the IPs!
+netif_ip4: 192.168.33.10
+netif_ip6: 2001:db8::10
+netif_gw6: 2001:db8:6a::1
+netif_netmask: 24
+netif_bridge: vmbr0
+nameserver: 192.168.33.1
+## better put this in a vautl, ex host_vars/inventory_hostname/vault/main.yml
+root_password: 123probando123

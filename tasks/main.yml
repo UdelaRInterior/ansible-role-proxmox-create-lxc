@@ -1,0 +1,133 @@
+---
+# proxmox_create_lxc: creation of a complete LXC container uin porxmox cluster
+# tasks file for ansible-role-proxmox-create-lxc/
+
+# Extract hostname from inventory_hostname (must be fqdn)
+- name: extraer el hostname del inventory_hostname que es el fqdn)
+  set_fact:
+    proxmox_hostname: "{{ inventory_hostname.split('.')[0] }}"
+
+- debug: 
+    msg: "{{ proxmox_hostname }} - {{inventory_hostname}}" 
+    verbosity: 2
+
+# Verify that python-pip is installed in the proxmox node
+- name: Verificar si python-pip está instalado en el nodo proxmox
+  apt: 
+    name: python-pip
+    state: present
+  delegate_to: "{{ api_host }}"
+
+# Verify if proxmoxer pip module is installed 
+- name: Verificar si el módulo proxmoxer de python está instalado 
+  pip: 
+    name: proxmoxer
+    state: present
+  delegate_to: "{{ api_host }}"
+
+# Download the container template
+- name: descargar la platilla de la debian
+  get_url:
+    url: "{{ url_ostemplate }}"
+    dest: /var/lib/vz/template/cache/
+  delegate_to: "{{ api_host }}"
+  register: descarga_ostemplate
+  tags:
+    - descarga
+    - download
+
+- debug:
+    var: descarga_ostemplate
+    verbosity: 2
+  tags:
+    - descarga
+    - download
+
+# Add lxc container template to node. 
+- name: agregar template lxc del container al nodo
+  proxmox_template:
+      node: "{{ node }}"
+      api_user: "{{ api_user }}"
+      api_host: "{{ api_host }}"
+      api_password: "{{node_deploy_password}}"
+      src: "{{ descarga_ostemplate.dest }}"
+      content_type: vztmpl
+      state: present
+  delegate_to: "{{ api_host }}"
+  tags:
+      - descarga
+      - download
+
+- block:
+# see at the end of the block the module_defaults  
+# eventual additional mounts are defined as a "mounts" list of structures defininfg 
+  
+    # Install the container with no additional mount
+    - name: instalar contenedores proxmox en el nodo proxmox idóneo, sin disco adicional
+      proxmox: 
+      delegate_to: "{{ api_host }}"
+      when:  (mounts is not defined) or ( mounts|length == 0 )
+      register: container
+
+    # Install the container with one additional mount
+    - name: instalar contenedores proxmox en el nodo proxmox idóneo, con un disco adicional
+      proxmox: 
+        mounts:
+          mp0: "{{ mounts.0.storage|default('local') }}:{{ mounts.0.size|default(30) }},mp={{ mounts.0.mount_point|default('/mnt') }},{% if mounts.0.acl is defined %}acl={{ mounts.0.acl }}{% endif %},{% if mounts.0.quota is defined %}quota={{ mounts.0.quota }}{% endif %}"
+      delegate_to: "{{ api_host }}"
+      when: mounts|length == 1
+      register: container
+
+    # Install the container with two additional mount
+    - name: instalar contenedores proxmox en el nodo proxmox idóneo, con dos discos adicionales
+      proxmox: 
+        mounts:
+          mp0: "{{ mounts.0.storage|default('local') }}:{{ mounts.0.size|default(30) }},mp={{ mounts.0.mount_point|default('/mnt/0') }},{% if mounts.0.acl is defined %}acl={{ mounts.0.acl }}{% endif %},{% if mounts.0.quota is defined %}quota={{ mounts.0.quota }}{% endif %}"
+          mp1: "{{ mounts.1.storage|default('local') }}:{{ mounts.1.size|default(30) }},mp={{ mounts.1.mount_point|default('/mnt/1') }},{% if mounts.1.acl is defined %}acl={{ mounts.1.acl }}{% endif %},{% if mounts.1.quota is defined %}quota={{ mounts.1.quota }}{% endif %}"
+      delegate_to: "{{ api_host }}"
+      when: mounts|length == 2
+      register: container
+
+    # Install the container with three additional mount
+    - name: instalar contenedores proxmox en el nodo proxmox idóneo, con tres discos adicionales
+      proxmox: 
+        mounts:
+          mp0: "{{ mounts.0.storage|default('local') }}:{{ mounts.0.size|default(30) }},mp={{ mounts.0.mount_point|default('/mnt/0') }},{% if mounts.0.acl is defined %}acl={{ mounts.0.acl }}{% endif %},{% if mounts.0.quota is defined %}quota={{ mounts.0.quota }}{% endif %}"
+          mp1: "{{ mounts.1.storage|default('local') }}:{{ mounts.1.size|default(30) }},mp={{ mounts.1.mount_point|default('/mnt/1') }},{% if mounts.1.acl is defined %}acl={{ mounts.1.acl }}{% endif %},{% if mounts.1.quota is defined %}quota={{ mounts.1.quota }}{% endif %}"
+          mp2: "{{ mounts.2.storage|default('local') }}:{{ mounts.2.size|default(30) }},mp={{ mounts.1.mount_point|default('/mnt/2') }},{% if mounts.1.acl is defined %}acl={{ mounts.1.acl }}{% endif %},{% if mounts.1.quota is defined %}quota={{ mounts.1.quota }}{% endif %}"
+      delegate_to: "{{ api_host }}"
+      when: mounts|length == 3
+      register: container
+      
+  module_defaults:
+    proxmox:
+        node: "{{ node }}"
+        api_user: "{{ api_user }}"
+        api_host: "{{ api_host }}"
+        api_password: "{{ node_deploy_password }}"
+        cores: "{{ cores }}"
+        storage: "{{ storage }}"
+        disk: "{{ disk }}"
+        hostname: "{{proxmox_hostname }}"
+        netif:
+            net0: "name={{ netif_name }},bridge={{ netif_bridge }},{% if (netif_hwaddr is defined) %},hwaddr={{ netif_hwaddr }}{% endif %},ip={{ netif_ip4 }}/{{ netif_netmask }},gw={{ netif_gw }}{% if (netif_ip6 is defined) %},ip6={{ netif_ip6 }}/{{ netif_netmask6 }}{% endif %}{% if (netif_ip6 is defined) and (gw6 is defined) %},gw6={{ netif_gw6 }}{% endif %}"
+        nameserver: "{{ nameserver }}"
+        ostemplate: "local:vztmpl/{{ url_ostemplate | urlsplit('path') | basename }}"
+        password: "{{ root_password }}"
+        pubkey: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+
+# Start the container
+- name: arrancar el contenedor
+  proxmox: 
+    node: "{{ node }}"
+    api_user: "{{ api_user }}"
+    api_host: "{{ api_host }}"
+    api_password: "{{contrasenha_deploy}}"
+    vmid: "{{ VMID.stdout }}"
+    state: started
+  delegate_to: "{{ api_host }}"
+  register: container_arrancado
+  when: (container is not defined) or (container is succeeded)
+  tags: 
+    - deploy
+

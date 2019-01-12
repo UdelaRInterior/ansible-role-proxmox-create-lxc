@@ -106,6 +106,7 @@
         api_host: "{{ api_host }}"
         api_password: "{{ node_deploy_password }}"
         cores: "{{ cores }}"
+        memory: "{{ memory }}"
         storage: "{{ storage }}"
         disk: "{{ disk }}"
         hostname: "{{proxmox_hostname }}"

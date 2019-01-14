@@ -10,6 +10,7 @@ api_user: deploy@pam
 node_deploy_password: D3pl0y_pwd
 url_ostemplate: http://download.proxmox.com/images/system/debian-9.0-standard_9.5-1_amd64.tar.gz
 cores: 1
+memory: 512
 storage: local-lvm
 disk: 30
 netif_name: eth0

@@ -124,7 +124,7 @@
 
 # Extract the ID of the VM from container var
 - name: Extraer el número de VM
-  shell: pct list | grep "{{ proxmox_hostname }}" | cut -f 1 -d ' '
+  shell: pct list | grep -w "{{ proxmox_hostname }}" | cut -f 1 -d ' '
   delegate_to: "{{ api_host }}"
   register: VMID
   when: container is succeeded

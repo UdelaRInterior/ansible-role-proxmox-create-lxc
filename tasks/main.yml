@@ -67,7 +67,10 @@
       proxmox:
       delegate_to: "{{ api_host }}"
       when:  (mounts is not defined) or ( mounts|length == 0 )
-      register: container
+      register: container0
+    
+    - set_fact:
+       container: "{{ container0 }}"
 
     # Install the container with one additional mount
     - name: Instalar contenedores proxmox en el nodo proxmox idóneo, con un disco adicional
@@ -76,7 +79,11 @@
           mp0: "{{ mounts.0.storage|default('local') }}:{{ mounts.0.size|default(30) }},mp={{ mounts.0.mount_point|default('/mnt') }},{% if mounts.0.acl is defined %}acl={{ mounts.0.acl }}{% endif %},{% if mounts.0.quota is defined %}quota={{ mounts.0.quota }}{% endif %}"
       delegate_to: "{{ api_host }}"
       when: ( mounts is defined ) and ( mounts|length == 1 )
-      register: container
+      register: container1
+
+    - set_fact:
+       container: "{{ container1 }}"
+      when: container1.changed
 
     # Install the container with two additional mount
     - name: Instalar contenedores proxmox en el nodo proxmox idóneo, con dos discos adicionales
@@ -86,7 +93,11 @@
           mp1: "{{ mounts.1.storage|default('local') }}:{{ mounts.1.size|default(30) }},mp={{ mounts.1.mount_point|default('/mnt/1') }},{% if mounts.1.acl is defined %}acl={{ mounts.1.acl }}{% endif %},{% if mounts.1.quota is defined %}quota={{ mounts.1.quota }}{% endif %}"
       delegate_to: "{{ api_host }}"
       when: ( mounts is defined ) and ( mounts|length == 2 )
-      register: container
+      register: container2
+
+    - set_fact:
+       container: "{{ container2 }}"
+      when: container2.changed
 
     # Install the container with three additional mount
     - name: Instalar contenedores proxmox en el nodo proxmox idóneo, con tres discos adicionales
@@ -97,7 +108,11 @@
           mp2: "{{ mounts.2.storage|default('local') }}:{{ mounts.2.size|default(30) }},mp={{ mounts.1.mount_point|default('/mnt/2') }},{% if mounts.1.acl is defined %}acl={{ mounts.1.acl }}{% endif %},{% if mounts.1.quota is defined %}quota={{ mounts.1.quota }}{% endif %}"
       delegate_to: "{{ api_host }}"
       when: ( mounts is defined ) and ( mounts|length == 3 )
-      register: container
+      register: container3
+
+    - set_fact:
+       container: "{{ container3 }}"
+      when: container3.changed
 
   module_defaults:
     proxmox:

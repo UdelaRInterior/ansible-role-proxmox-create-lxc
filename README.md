@@ -16,7 +16,7 @@ The defaults define the container parameters. To be specified by host under `hos
 Dependencies
 ------------
 
-none right now. 
+we need ansible version > 2.5 (?) to have dependences. 
 
 A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
 

@@ -27,3 +27,7 @@ netif_bridge: vmbr0
 nameserver: 192.168.33.1
 ## better put this in a vautl, ex host_vars/inventory_hostname/vault/main.yml
 root_password: 123probando123
+
+## Arranque: por omisión lo dejamos en no, 
+## poner "yes" cuando se pone en producción el servidor
+# onboot: no

@@ -161,11 +161,34 @@
     vmid: "{{ VMID.stdout }}"
     state: started
   delegate_to: "{{ api_host }}"
+  register: arrancado
   when: (container is not defined) or (container is succeeded)
   tags:
     - deploy
 
 # Waiting 15 seconds for the container to start
-- pause:
-    seconds: 15
-    prompt: "Esperando 15 segundos para que el contenedor arranque"
+- name: repintiendo ping cada 3s hasta que el el contenedor arranque
+  wait_for_connection:
+    delay: 3
+    sleep: 3
+    timeout: 30
+  remote_user: root
+
+#  shell: ping -c 1 -w 2 {{ inventory_hostname }} 2>&1 > /dev/null
+#  register: online
+#  delegate_to: localhost
+#  ##  failed_when: online.rc == 0
+#  when: arrancado.changed
+# 
+#  ignore_errors: yes
+#  until: online.rc != 0
+#  delay: 3
+#  retries: 5
+
+#- name: ver resultado del shell ping
+#  debug:
+#   var: online
+
+#  pause:
+#    seconds: 15
+#    prompt: "Esperando 15 segundos para que el contenedor arranque"

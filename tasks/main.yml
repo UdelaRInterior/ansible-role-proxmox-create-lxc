@@ -105,7 +105,7 @@
         mounts:
           mp0: "{{ mounts.0.storage|default('local') }}:{{ mounts.0.size|default(30) }},mp={{ mounts.0.mount_point|default('/mnt/0') }},{% if mounts.0.acl is defined %}acl={{ mounts.0.acl }}{% endif %},{% if mounts.0.quota is defined %}quota={{ mounts.0.quota }}{% endif %}"
           mp1: "{{ mounts.1.storage|default('local') }}:{{ mounts.1.size|default(30) }},mp={{ mounts.1.mount_point|default('/mnt/1') }},{% if mounts.1.acl is defined %}acl={{ mounts.1.acl }}{% endif %},{% if mounts.1.quota is defined %}quota={{ mounts.1.quota }}{% endif %}"
-          mp2: "{{ mounts.2.storage|default('local') }}:{{ mounts.2.size|default(30) }},mp={{ mounts.1.mount_point|default('/mnt/2') }},{% if mounts.1.acl is defined %}acl={{ mounts.1.acl }}{% endif %},{% if mounts.1.quota is defined %}quota={{ mounts.1.quota }}{% endif %}"
+          mp2: "{{ mounts.2.storage|default('local') }}:{{ mounts.2.size|default(30) }},mp={{ mounts.2.mount_point|default('/mnt/2') }},{% if mounts.2.acl is defined %}acl={{ mounts.2.acl }}{% endif %},{% if mounts.2.quota is defined %}quota={{ mounts.2.quota }}{% endif %}"
       delegate_to: "{{ api_host }}"
       when: ( mounts is defined ) and ( mounts|length == 3 )
       register: container3
@@ -126,7 +126,7 @@
         disk: "{{ disk }}"
         hostname: "{{ proxmox_hostname }}"
         netif:
-            net0: "name={{ netif_name }},bridge={{ netif_bridge }},{% if (netif_hwaddr is defined) %},hwaddr={{ netif_hwaddr }}{% endif %},ip={{ netif_ip4 }}/{{ netif_netmask }},gw={{ netif_gw }}{% if (netif_ip6 is defined) %},ip6={{ netif_ip6 }}/{{ netif_netmask6 }}{% endif %}{% if (netif_ip6 is defined) and (gw6 is defined) %},gw6={{ netif_gw6 }}{% endif %}"
+            net0: "name={{ netif_name }},bridge={{ netif_bridge }},{% if (netif_hwaddr is defined) %},hwaddr={{ netif_hwaddr }}{% endif %},ip={{ netif_ip4 }}/{{ netif_netmask }}{% if (netif_gw is defined) %},gw={{ netif_gw }}{% endif %}{% if (netif_ip6 is defined) %},ip6={{ netif_ip6 }}/{{ netif_netmask6 }}{% endif %}{% if (netif_ip6 is defined) and (netif_gw6 is defined) %},gw6={{ netif_gw6 }}{% endif %}"
         nameserver: "{{ nameserver }}"
         ostemplate: "local:vztmpl/{{ url_ostemplate | urlsplit('path') | basename }}"
         password: "{{ root_password }}"

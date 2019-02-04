@@ -1,6 +1,6 @@
 ---
 # defaults file for ansible-role-proxmox-create-lxc/
-# typical variables to define for a container (in host_vars/inventory_hostname, for ex)
+# vars needed to define the parameters for the wraped proxmox api
 
 node: my_node
 api_host: my_node.my_cluster.org
@@ -18,13 +18,14 @@ netif_name: eth0
 # this variable may be defined or not
 #netif_hwaddr: 52:54:00:00:a3:a0
 netif_gw: 192.168.33.1
-# Do define the IPs!
+# Do define at least the IPv4!
 netif_ip4: 192.168.33.10
 netif_ip6: 2001:db8::10
 netif_gw6: 2001:db8:6a::1
 netif_netmask: 24
+netif_netmask6: 64
 netif_bridge: vmbr0
-nameserver: 192.168.33.1
+nameserver: 192.168.8.8
 ## better put this in a vautl, ex host_vars/inventory_hostname/vault/main.yml
 root_password: 123probando123
 

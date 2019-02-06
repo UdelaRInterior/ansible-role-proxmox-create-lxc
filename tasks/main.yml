@@ -173,6 +173,7 @@
     sleep: 3
     timeout: 30
   remote_user: root
+  when: arrancado.changed
 
 #  shell: ping -c 1 -w 2 {{ inventory_hostname }} 2>&1 > /dev/null
 #  register: online

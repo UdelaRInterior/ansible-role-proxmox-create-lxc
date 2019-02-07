@@ -1,0 +1,156 @@
+################################################################################
+### Localization
+################################################################################
+
+d-i debian-installer/locale string de_DE.UTF-8
+d-i debian-installer/language string de
+d-i debian-installer/country string DE
+d-i localechooser/supported-locales de_DE.UTF-8
+d-i localechooser/translation/warn-light boolean true
+d-i localechooser/translation/warn-severe boolean true
+
+################################################################################
+### Keyboard
+################################################################################
+
+d-i console-setup/ask_detect boolean false
+d-i debian-installer/keymap select de-latin1-nodeadkeys
+d-i console-keymaps-at/keymap select de-latin1-nodeadkeys
+d-i console-setup/layoutcode string de_DE
+d-i languagechooser/language-name-fb select German
+d-i countrychooser/country-name select Germany
+
+################################################################################
+### Network configuration
+################################################################################
+
+d-i netcfg/choose_interface select auto
+d-i netcfg/wireless_wep string
+d-i netcfg/get_hostname string PRESEED
+d-i netcfg/get_domain string lan
+
+################################################################################
+### Mirror settings
+################################################################################
+
+d-i mirror/country string manual
+d-i mirror/http/hostname string de.archive.ubuntu.com
+d-i mirror/http/directory string /ubuntu
+d-i mirror/http/proxy string
+d-i mirror/http/mirror select de.archive.ubuntu.com
+
+################################################################################
+### Clock and time zone setup
+################################################################################
+
+d-i clock-setup/utc boolean true
+d-i time/zone string Europe/Berlin
+d-i clock-setup/ntp boolean true
+
+################################################################################
+### Partitioning
+################################################################################
+
+#d-i preseed/early_command string umount /media || true
+#d-i partman/unmount_active boolean true
+d-i partman-auto/disk string /dev/sda
+d-i partman-auto/method string regular
+d-i partman-lvm/device_remove_lvm boolean true
+d-i partman-lvm/device_remove_lvm_span boolean true
+d-i partman-md/device_remove_md boolean true
+d-i partman-lvm/confirm boolean true
+d-i partman-lvm/confirm_nooverwrite boolean true
+d-i partman-auto/purge_lvm_from_device boolean true
+d-i partman-auto-lvm/guided_size string max
+d-i partman-auto-lvm/new_vg_name string workstation
+d-i partman-auto/choose_recipe select atomic
+d-i partman/default_filesystem string ext4
+d-i partman-partitioning/confirm_write_new_label boolean true
+d-i partman/choose_partition select finish
+d-i partman/confirm boolean true
+d-i partman/confirm_nooverwrite boolean true
+d-i partman-md/confirm boolean true
+d-i partman-partitioning/confirm_write_new_label boolean true
+d-i partman/choose_partition select finish
+d-i partman/confirm boolean true
+d-i partman/confirm_nooverwrite boolean true
+d-i partman-lvm/confirm_nooverwrite boolean true
+
+################################################################################
+### Base system installation
+################################################################################
+
+#d-i base-installer/kernel/skip-install boolean true
+#d-i base-installer/kernel/image string linux-generic
+
+################################################################################
+### Account setup
+################################################################################
+
+d-i passwd/user-fullname string ubuntu
+d-i passwd/username string ubuntu
+d-i passwd/user-password password ubuntu
+d-i passwd/user-password-again password ubuntu
+d-i user-setup/allow-password-weak boolean true
+d-i passwd/user-default-groups string sudo
+d-i user-setup/encrypt-home boolean false
+
+################################################################################
+### Apt setup
+################################################################################
+
+d-i apt-setup/universe boolean true
+d-i apt-setup/multiverse boolean true
+d-i apt-setup/services-select multiselect security
+d-i apt-setup/security_host string security.ubuntu.com
+d-i apt-setup/security_path string /ubuntu
+
+################################################################################
+### Package selection
+################################################################################
+
+tasksel tasksel/first multiselect ubuntu-minimal
+
+# Individual additional packages to install
+d-i pkgsel/include string \
+	openssh-server \
+	python
+
+# see https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1317602
+#d-i pkgsel/upgrade select none
+
+d-i pkgsel/language-packs multiselect de, en
+d-i pkgsel/update-policy select unattended-upgrades 
+
+################################################################################
+### Boot loader installation
+################################################################################
+
+d-i grub-installer/only_debian boolean true
+d-i grub-installer/with_other_os boolean true
+d-i grub-installer/bootdev string /dev/sda
+
+################################################################################
+### Finishing up the installation
+################################################################################
+
+d-i finish-install/reboot_in_progress note
+d-i debian-installer/exit/poweroff boolean true
+
+################################################################################
+### X configuration
+################################################################################
+
+# Monitor autodetection is recommended.
+xserver-xorg xserver-xorg/autodetect_monitor boolean true
+# Uncomment if you have an LCD display.
+xserver-xorg xserver-xorg/config/monitor/lcd boolean true
+xserver-xorg xserver-xorg/config/monitor/selection-method select medium
+xserver-xorg xserver-xorg/config/monitor/mode-list select 1024x768 @ 60 Hz
+
+################################################################################
+### Running custom commands during the installation
+################################################################################
+
+d-i preseed/late_command string in-target /bin/sh -c 'wget -q -O - https://gitlab.com/morph027/pve-infra-poc/raw/master/contrib/preseed/late-command | bash'
+

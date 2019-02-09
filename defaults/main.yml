@@ -8,7 +8,7 @@ api_user: deploy@pam
 ## better put this in a vautl, ex host_vars/inventory_hostname/vault/main.yml
 ## we have to find a way to define node_deploy_password as node[hostname]/deploy_password
 node_deploy_password: D3pl0y_pwd
-url_ostemplate: http://download.proxmox.com/images/system/debian-9.0-standard_9.5-1_amd64.tar.gz
+url_ostemplate: http://download.proxmox.com/images/system/debian-9.0-standard_9.7-1_amd64.tar.gz
 cores: 1
 memory: 512
 storage: local-lvm

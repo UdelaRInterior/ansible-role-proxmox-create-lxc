@@ -25,10 +25,11 @@ netif_ip6: 2001:db8::10
 netif_netmask6: 64
 netif_gw6: 2001:db8:6a::1
 netif_bridge: vmbr0
+netif_firewall: 1 # 1=true  0=false
 nameserver: 192.168.8.8
 ## better put this in a vautl, ex host_vars/inventory_hostname/vault/main.yml
 root_password: 123probando123
 
-## Arranque: por omisión lo dejamos en no, 
+## Arranque: por omisión lo dejamos en no,
 ## poner "yes" cuando se pone en producción el servidor
 # onboot: no

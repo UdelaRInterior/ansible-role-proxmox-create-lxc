@@ -126,7 +126,7 @@
         disk: "{{ disk }}"
         hostname: "{{ proxmox_hostname }}"
         netif:
-            net0: "name={{ netif_name }},{% if (netif_firewall is defined) %}firewall={{ netif_firewall }}{% endif %},bridge={{ netif_bridge }},{% if (netif_hwaddr is defined) %},hwaddr={{ netif_hwaddr }}{% endif %},ip={{ netif_ip4 }}/{{ netif_netmask }}{% if (netif_gw is defined) %},gw={{ netif_gw }}{% endif %}{% if (netif_ip6 is defined) %},ip6={{ netif_ip6 }}/{{ netif_netmask6 }}{% endif %}{% if (netif_ip6 is defined) and (netif_gw6 is defined) %},gw6={{ netif_gw6 }}{% endif %}"
+            net0: "name={{ netif_name }},bridge={{ netif_bridge }},{% if (netif_hwaddr is defined) %},hwaddr={{ netif_hwaddr }}{% endif %},ip={{ netif_ip4 }}/{{ netif_netmask }}{% if (netif_gw is defined) %},gw={{ netif_gw }}{% endif %}{% if (netif_ip6 is defined) %},ip6={{ netif_ip6 }}/{{ netif_netmask6 }}{% endif %}{% if (netif_ip6 is defined) and (netif_gw6 is defined) %},gw6={{ netif_gw6 }}{% endif %},{% if (netif_firewall is defined and netif_firewall) %}firewall=1{% endif %}"
         nameserver: "{{ nameserver }}"
         ostemplate: "local:vztmpl/{{ url_ostemplate | urlsplit('path') | basename }}"
         password: "{{ root_password }}"

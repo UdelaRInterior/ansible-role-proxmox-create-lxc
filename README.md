@@ -1,7 +1,7 @@
 Ansible role proxmox_create_lxc
 =========
 
- A complete role for LXC container creation in a Proxmox Virtual Environement (pve) cluster, with network fulluy configured and eventually several disks with acl and quotas management. 
+ A complete role for LXC container creation in a Proxmox Virtual Environement (pve) cluster, with network fully configured and eventually several disks with acl and quotas management. 
 
 Requirements
 ------------

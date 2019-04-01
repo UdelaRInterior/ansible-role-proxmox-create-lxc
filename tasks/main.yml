@@ -131,6 +131,7 @@
         ostemplate: "local:vztmpl/{{ url_ostemplate | urlsplit('path') | basename }}"
         password: "{{ root_password }}"
         pubkey: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+        onboot: "{{ onboot }}"
 
 # Show the ID of the VM
 - name: Mirá el número de la VM

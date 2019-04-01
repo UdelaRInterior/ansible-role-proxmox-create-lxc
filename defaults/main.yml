@@ -32,4 +32,4 @@ root_password: 123probando123
 
 ## Arranque: por omisión lo dejamos en no,
 ## poner "yes" cuando se pone en producción el servidor
-# onboot: no
+onboot: no

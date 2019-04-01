@@ -31,6 +31,6 @@ nameserver: 192.168.8.8
 ## better put this in a vautl, ex host_vars/inventory_hostname/vault/main.yml
 root_password: 123probando123
 
-## Arranque: por omisión lo dejamos en no,
 ## Start the container when node boot. It is recommended setting in 'yes' when container is in production
-# onboot: no
+onboot: no
+

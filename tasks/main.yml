@@ -144,6 +144,7 @@
   delegate_to: "{{ api_host }}"
   register: VMID
   when: container is succeeded
+  changed_when: false
   tags:
     - deploy
 
@@ -175,22 +176,3 @@
     timeout: 30
   remote_user: root
   when: arrancado.changed
-
-#  shell: ping -c 1 -w 2 {{ inventory_hostname }} 2>&1 > /dev/null
-#  register: online
-#  delegate_to: localhost
-#  ##  failed_when: online.rc == 0
-#  when: arrancado.changed
-#
-#  ignore_errors: yes
-#  until: online.rc != 0
-#  delay: 3
-#  retries: 5
-
-#- name: ver resultado del shell ping
-#  debug:
-#   var: online
-
-#  pause:
-#    seconds: 15
-#    prompt: "Esperando 15 segundos para que el contenedor arranque"

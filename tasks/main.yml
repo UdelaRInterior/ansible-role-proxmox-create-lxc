@@ -1,5 +1,5 @@
 ---
-# proxmox_create_lxc: creation of a complete LXC container uin porxmox cluster
+# proxmox_create_lxc: creation of a complete LXC container in Proxmox cluster
 # tasks file for ansible-role-proxmox-create-lxc/
 
 # Extract hostname from inventory_hostname (must be fqdn)
@@ -126,7 +126,13 @@
         disk: "{{ disk }}"
         hostname: "{{ proxmox_hostname }}"
         netif:
-            net0: "name={{ netif_name }},bridge={{ netif_bridge }},{% if (netif_hwaddr is defined) %},hwaddr={{ netif_hwaddr }}{% endif %},ip={{ netif_ip4 }}/{{ netif_netmask }}{% if (netif_gw is defined) %},gw={{ netif_gw }}{% endif %}{% if (netif_ip6 is defined) %},ip6={{ netif_ip6 }}/{{ netif_netmask6 }}{% endif %}{% if (netif_ip6 is defined) and (netif_gw6 is defined) %},gw6={{ netif_gw6 }}{% endif %},{% if (netif_firewall is defined and netif_firewall) %}firewall=1{% endif %}"
+          '{
+              {%- for netif, parameters in net_interfaces.iteritems() -%}
+                {% for item in parameters -%}
+                  "{{ netif }}":"name={{ item.name }},bridge={{ item.bridge }},{% if (item.hwaddr is defined) %}hwaddr={{ item.hwaddr }},{% endif %}{% if (item.ip4 is defined) %}ip={{ item.ip4 }}/{{ item.netmask4 }},{% endif %}{% if (item.gw4 is defined) %}gw={{ item.gw4 }},{% endif %}{% if (item.ip6 is defined) %}ip6={{ item.ip6 }}/{{ item.netmask6 }},{% endif %}{% if (item.gw6 is defined) %}gw6={{ item.gw6 }},{% endif %}{% if (item.firewall is defined and item.firewall) %}firewall=1{% endif %}",
+                {%- endfor %}
+              {%- endfor -%}
+          }'
         nameserver: "{{ nameserver }}"
         ostemplate: "local:vztmpl/{{ url_ostemplate | urlsplit('path') | basename }}"
         password: "{{ root_password }}"

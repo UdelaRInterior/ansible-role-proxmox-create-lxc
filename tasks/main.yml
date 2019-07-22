@@ -2,8 +2,8 @@
 # proxmox_create_lxc: creation of a complete LXC container uin porxmox cluster
 # tasks file for ansible-role-proxmox-create-lxc/
 
-# Extract hostname from inventory_hostname (must be fqdn)
-- name: Extraer el hostname del inventory_hostname que es el fqdn)
+# Extraer el hostname del inventory_hostname (debe ser el fqdn)
+- name: Extract hostname from inventory_hostname (must be fqdn)
   set_fact:
     proxmox_hostname: "{{ inventory_hostname.split('.')[0] }}"
 
@@ -11,22 +11,22 @@
     msg: "{{ proxmox_hostname }} - {{inventory_hostname}}"
     verbosity: 2
 
-# Verify that python-pip is installed in the proxmox node
-- name: Verificar si python-pip está instalado en el nodo proxmox
+# Verificar si python-pip está instalado en el nodo proxmox
+- name: Verify that python-pip is installed in the Proxmox node
   apt:
     name: python-pip
     state: present
   delegate_to: "{{ api_host }}"
 
-# Verify if proxmoxer pip module is installed
-- name: Verificar si el módulo proxmoxer de python está instalado
+#  Verificar si el módulo proxmoxer de python está instalado
+- name: Verify if proxmoxer pip module is installed
   pip:
     name: proxmoxer
     state: present
   delegate_to: "{{ api_host }}"
 
-# Download the container template
-- name: Descargar la plantilla de la debian
+# Descargar la plantilla del contenedor
+- name: Download the container template
   get_url:
     url: "{{ url_ostemplate }}"
     dest: /var/lib/vz/template/cache/
@@ -43,8 +43,8 @@
     - descarga
     - download
 
-# Add LXC container template to node.
-- name: Agregar template lxc del container al nodo
+# Agregar template lxc del container al nodo
+- name: Add LXC container template to node
   proxmox_template:
       node: "{{ node }}"
       api_user: "{{ api_user }}"
@@ -62,8 +62,8 @@
 # see at the end of the block the module_defaults
 # eventual additional mounts are defined as a "mounts" list of structures defininfg
 
-    # Install the container with no additional mount
-    - name: Instalar contenedores proxmox en el nodo proxmox idóneo, sin disco adicional
+    #  Instalar contenedores proxmox en el nodo proxmox idóneo, sin disco adicional
+    - name: Install the container with no additional mount
       proxmox:
       delegate_to: "{{ api_host }}"
       when:  (mounts is not defined) or ( mounts|length == 0 )
@@ -72,8 +72,8 @@
     - set_fact:
        container: "{{ container0 }}"
 
-    # Install the container with one additional mount
-    - name: Instalar contenedores proxmox en el nodo proxmox idóneo, con un disco adicional
+    # Instalar contenedores proxmox en el nodo proxmox idóneo, con un disco adicional
+    - name: Install the container with one additional mount
       proxmox:
         mounts:
           mp0: "{{ mounts.0.storage|default('local') }}:{{ mounts.0.size|default(30) }},mp={{ mounts.0.mount_point|default('/mnt') }},{% if mounts.0.acl is defined %}acl={{ mounts.0.acl }}{% endif %},{% if mounts.0.quota is defined %}quota={{ mounts.0.quota }}{% endif %}"
@@ -85,8 +85,8 @@
        container: "{{ container1 }}"
       when: container1.changed
 
-    # Install the container with two additional mount
-    - name: Instalar contenedores proxmox en el nodo proxmox idóneo, con dos discos adicionales
+    # Instalar contenedores proxmox en el nodo proxmox idóneo, con dos discos adicionales
+    - name: Install the container with two additional mount
       proxmox:
         mounts:
           mp0: "{{ mounts.0.storage|default('local') }}:{{ mounts.0.size|default(30) }},mp={{ mounts.0.mount_point|default('/mnt/0') }},{% if mounts.0.acl is defined %}acl={{ mounts.0.acl }}{% endif %},{% if mounts.0.quota is defined %}quota={{ mounts.0.quota }}{% endif %}"
@@ -99,8 +99,8 @@
        container: "{{ container2 }}"
       when: container2.changed
 
-    # Install the container with three additional mount
-    - name: Instalar contenedores proxmox en el nodo proxmox idóneo, con tres discos adicionales
+    # Instalar contenedores proxmox en el nodo proxmox idóneo, con tres discos adicionales
+    - name: Install the container with three additional mount
       proxmox:
         mounts:
           mp0: "{{ mounts.0.storage|default('local') }}:{{ mounts.0.size|default(30) }},mp={{ mounts.0.mount_point|default('/mnt/0') }},{% if mounts.0.acl is defined %}acl={{ mounts.0.acl }}{% endif %},{% if mounts.0.quota is defined %}quota={{ mounts.0.quota }}{% endif %}"
@@ -133,13 +133,13 @@
         pubkey: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
         onboot: "{{ onboot }}"
 
-# Show the ID of the VM
-- name: Mirá el número de la VM
+# Mirá el número de la VM
+- name: Show the ID of the VM
   debug:
     var: container
 
-# Extract the ID of the VM from container var
-- name: Extraer el número de VM
+# Extraer el número de VM
+- name: Extract the ID of the VM from container var
   shell: pct list | grep -w "{{ proxmox_hostname }}" | cut -f 1 -d ' '
   delegate_to: "{{ api_host }}"
   register: VMID
@@ -153,8 +153,8 @@
   tags:
     - deploy
 
-# Turn on the container
-- name: Arrancar el contenedor
+# Arrancar el contenedor
+- name: Turn on the container
   proxmox:
     node: "{{ node }}"
     api_user: "{{ api_user }}"
@@ -163,16 +163,16 @@
     vmid: "{{ VMID.stdout }}"
     state: started
   delegate_to: "{{ api_host }}"
-  register: arrancado
+  register: turned_on
   when: (container is not defined) or (container is succeeded)
   tags:
     - deploy
 
-# Waiting 15 seconds for the container to start
-- name: repintiendo ping cada 3s hasta que el el contenedor arranque
+# Repintiendo ping cada 3s hasta que el el contenedor arranque
+- name: Repeating ping every 3 seconds until the container starts
   wait_for_connection:
     delay: 3
     sleep: 3
     timeout: 30
   remote_user: root
-  when: arrancado.changed
+  when: turned_on.changed

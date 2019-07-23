@@ -6,7 +6,7 @@ node: my_node
 api_host: my_node.my_cluster.org
 api_user: deploy@pam
 node_deploy_password: D3pl0y_pwd
-url_ostemplate: http://download.proxmox.com/images/system/debian-9.0-standard_9.7-1_amd64.tar.gz
+url_ostemplate: http://download.proxmox.com/images/system/debian-10.0-standard_10.0-1_amd64.tar.gz
 cores: 1
 memory: 512
 storage: local-lvm
@@ -14,19 +14,28 @@ disk: 32
 nameserver: 192.168.8.8 192.168.8.4
 
 net_interfaces:
-  net0:
-    - name: eth0
+    - id: net0
+      name: eth0
       hwaddr: F6:A2:69:61:94:8D
-      ip4: 192.168.33.10        # ip4: dhcp
+      ip4: 192.168.33.10        # ip4: dhcp (to use DHCP)
       netmask4: 24
       gw4: 192.168.33.1
-      ip6: 2001:db8::10
+      ip6: 200:db8::10          # ip6: dhcp  (to use DHCP)  ### ip6: auto (to use SLAAC)
       netmask6: 64
       gw6: 200:db8::1
       bridge: vmbr0
       firewall: false  # Setting netif_firewall in TRUE, enable the use of firewall on the network interface
+      rate_limit: 5    # In MB/s
+      vlan_tag: 200
 
-## better put this in a vault
+    - id: net1
+      name: eth1
+      hwaddr: C6:A5:19:B1:92:7D
+      ip6: 200:db8::10          # ip6: dhcp  (to use DHCP)  ### ip6: auto (to use SLAAC)
+      netmask6: 64
+      bridge: vmbr1
+
+## Better put this in a vault
 root_password: 123testing1234
 
 ## Start the container when node boot. It is recommended setting in 'yes' when container is in production

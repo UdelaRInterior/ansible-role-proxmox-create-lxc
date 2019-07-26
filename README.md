@@ -1,14 +1,14 @@
 Ansible role proxmox_create_lxc
 =========
 
- A complete role for LXC container creation in a Proxmox Virtual Environement (pve) cluster, with network fully configured and eventually several disks with acl and quotas management. 
+ A complete role for LXC container creation in a Proxmox Virtual Environement (PVE) cluster, with network fully configured and eventually several disks with acl and quotas management.
 
 Requirements
 ------------
 
-You must act on a proxmox node or cluster already configured, i.e. you need Proxmox Virtual Environement (pve) node already installed (tested with pve 5), and a proxmox user with lxc container creation rights. 
+You must act on a Proxmox node or cluster already configured, i.e. you need Proxmox Virtual Environement (PVE) node already installed (tested with PVE 5), and a Proxmox user with LXC container creation rights.
 
-Yo also need an ssh key configured in the local machine, where ansible is ran, i.e. a file `~/.ssh/id_rsa.pub`. 
+Yo also need an SSH key configured in the local machine, where ansible is ran, i.e. a file `~/.ssh/id_rsa.pub`.
 
 
 Installation
@@ -23,7 +23,7 @@ To be able to update later and eventually to modify it, prefer using `requiremen
 And then download it with `ansible-galaxy`:
 
 ```shell
-$ ansible-galaxy install -r requirements.yml -g
+$ ansible-galaxy install -r requirements.yml
 ```
 
 Using `git`, you'll have to be carefull to folder name :
@@ -41,75 +41,105 @@ The `defaults` variables define the container parameters. To be specified by hos
 node: my_node
 api_host: my_node.my_cluster.org
 api_user: deploy@pam
-## better put this in a vautl, ex host_vars/inventory_hostname/vault/main.yml
-## we have to find a way to define node_deploy_password as node[hostname]/deploy_password
 node_deploy_password: D3pl0y_pwd
-url_ostemplate: http://download.proxmox.com/images/system/debian-9.0-standard_9.5-1_amd64.tar.gz
+url_ostemplate: http://download.proxmox.com/images/system/debian-10.0-standard_10.0-1_amd64.tar.gz
+unprivileged: true
 cores: 1
+cpu_limit: 1
+cpu_units: 1000
 memory: 512
+swap: 512
+disk: 32
 storage: local-lvm
-disk: 30
-netif_name: eth0
-# esta variable puede estar definida o no
-# this variable may be defined or not
-#netif_hwaddr: 52:54:00:00:a3:a0
-# Do define at least the IPv4!
-netif_ip4: 192.168.33.10
-netif_netmask: 24
-netif_gw: 192.168.33.1
-netif_ip6: 2001:db8::10
-netif_netmask6: 64
-netif_gw6: 2001:db8:6a::1
-netif_bridge: vmbr0
-nameserver: 192.168.8.8
-## better put this in a vautl, ex host_vars/inventory_hostname/vault/main.yml
-root_password: 123probando123
+nameserver: 192.168.8.8 192.168.8.4
+
+net_interfaces:
+  - id: net0
+    name: eth0
+    hwaddr: F6:A2:69:61:94:8D
+    ip4: 192.168.33.10        # ip4: dhcp (to use DHCP)
+    netmask4: 24
+    gw4: 192.168.33.1
+    ip6: 200:db8::10          # ip6: dhcp  (to use DHCP)  ### ip6: auto (to use SLAAC)
+    netmask6: 64
+    gw6: 200:db8::1
+    bridge: vmbr0
+    firewall: false  # Setting netif_firewall in TRUE, enable the use of firewall on the network interface
+    rate_limit: 5    # In MB/s
+    vlan_tag: 200
+  - id: net1
+    name: eth1
+    hwaddr: C6:A5:19:B1:92:7D
+    ip6: 200:db8::10          # ip6: dhcp  (to use DHCP)  ### ip6: auto (to use SLAAC)
+    netmask6: 64
+    bridge: vmbr1
+
+mounts:
+  - id: mp0
+    storage: local-lvm
+    size: 16
+    mount_point: "/mnt/data"
+    acl: true
+    quota: true
+    backup: true
+    skip_replication: true
+    read_only: true
+  - id: mp1
+    storage: local-lvm
+    size: 8
+    mount_point: "/mnt/logs"
+
+root_password: 123testing1234
+
+onboot: no
 ```
 
 Dependencies
 ------------
 
-We need ansible version > 2.5 (?) to have the appropriate API of proxmox modules. 
+We need Ansible version > 2.5 (?) to have the appropriate API of Proxmox modules.
 
-Proxmox pve 5 installed in a the proxmox node. 
+Proxmox VE 5 installed in a the Proxmox node.
 
 Example Playbook
 ----------------
 
-Let's say, as the vars example, `my_node.my_cluster.org` is our pve node NS (api on port 8006), `my_node` it's pve node name, and `deploy` our proxmox user in this node, and `pve_containers_group` an ansible group of the containers to define. 
+Let's say, as the vars example, `my_node.my_cluster.org` is our pve node NS (api on port 8006), `my_node` it's pve node name, and `deploy` our Proxmox user in this node, and `pve_containers_group` an Ansible group of the containers to define.
 
-Given that: 
-* containers are named `<container>.node.my_cluster.org`, 
-* Name resolutions of pve containers and node are configured, 
+Given that:
+* containers are named `<container>.node.my_cluster.org`,
+* Name resolutions of PVE containers and node are configured,
 * containers' variables are defined (for example in each `host_vars/<container>/vars/`),
 * All new IPs are allocated and routed,
 
-the following playbook creates all the containers declared in the `pve_containers_group`, 
+the following playbook creates all the containers declared in the `pve_containers_group`,
 
     - name: create containers declared in  pve_containers_group
       hosts: pve_containers_group
       remote_user: deploy
       become: yes
       gather_facts: no
- 
+
       roles:
         - create_lxc
 
-will create and start the containers, and configure root access with the `root_password` defined and the ssh key of your local machine (`~/.ssh/id_rsa.pub`). 
+will create and start the containers, and configure root access with the `root_password` defined and the ssh key of your local machine (`~/.ssh/id_rsa.pub`).
 
-BE CAREFULL: contrairly to debian standard installation, proxmox container templates let remote root ssh open. 
+BE CAREFULL: contrairly to debian standard installation, Proxmox container templates let remote root SSH open.
 
 License
 -------
 
-(c) Universidad de la República (UdelaR), Red de Unidades Informáticas de la UdelaR en el Interior. 
-licenced under GPL-v3
+(c) Universidad de la República (UdelaR), Red de Unidades Informáticas de la UdelaR en el Interior.
+
+Licenced under GPL-v3
 
 Author Information
 ------------------
 
-Ulvida (daniel@uruguayos.fr)
-https://github.com/UdelaRInterior
+[@ulvida](https://github.com/ulvida) (daniel@uruguayos.fr)
+[@santiagomr](https://github.com/santiagomr)
+[@UdelaRInterior](https://github.com/UdelaRInterior)
 https://proyectos.interior.edu.uy/
 
-Inspired in [this Proxmox IaaS Proof of Concept](https://gitlab.com/morph027/pve-infra-poc/blob/master/run.yml). 
+Inspired in [this Proxmox IaaS Proof of Concept](https://gitlab.com/morph027/pve-infra-poc/blob/master/run.yml).

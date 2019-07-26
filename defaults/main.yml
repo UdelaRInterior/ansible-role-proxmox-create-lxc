@@ -7,49 +7,51 @@ api_host: my_node.my_cluster.org
 api_user: deploy@pam
 node_deploy_password: D3pl0y_pwd
 url_ostemplate: http://download.proxmox.com/images/system/debian-10.0-standard_10.0-1_amd64.tar.gz
+# unprivileged: true
 cores: 1
+# cpu_limit: 1
+# cpu_units: 1000
 memory: 512
-storage: local-lvm
+# swap: 512
 disk: 32
+storage: local-lvm
 nameserver: 192.168.8.8 192.168.8.4
 
 net_interfaces:
-    - id: net0
-      name: eth0
-      hwaddr: F6:A2:69:61:94:8D
-      ip4: 192.168.33.10        # ip4: dhcp (to use DHCP)
-      netmask4: 24
-      gw4: 192.168.33.1
-      ip6: 200:db8::10          # ip6: dhcp  (to use DHCP)  ### ip6: auto (to use SLAAC)
-      netmask6: 64
-      gw6: 200:db8::1
-      bridge: vmbr0
-      firewall: false  # Setting netif_firewall in TRUE, enable the use of firewall on the network interface
-      rate_limit: 5    # In MB/s
-      vlan_tag: 200
+  - id: net0
+    name: eth0
+    hwaddr: F6:A2:69:61:94:8D
+    ip4: 192.168.33.10        # ip4: dhcp (to use DHCP)
+    netmask4: 24
+    gw4: 192.168.33.1
+    ip6: 200:db8::10          # ip6: dhcp  (to use DHCP)  ### ip6: auto (to use SLAAC)
+    netmask6: 64
+    gw6: 200:db8::1
+    bridge: vmbr0
+    firewall: false  # Setting netif_firewall in TRUE, enable the use of firewall on the network interface
+    rate_limit: 5    # In MB/s
+    vlan_tag: 200
+  - id: net1
+    name: eth1
+    hwaddr: C6:A5:19:B1:92:7D
+    ip6: 200:db8::10          # ip6: dhcp  (to use DHCP)  ### ip6: auto (to use SLAAC)
+    netmask6: 64
+    bridge: vmbr1
 
-    - id: net1
-      name: eth1
-      hwaddr: C6:A5:19:B1:92:7D
-      ip6: 200:db8::10          # ip6: dhcp  (to use DHCP)  ### ip6: auto (to use SLAAC)
-      netmask6: 64
-      bridge: vmbr1
-
-mounts: []
+mounts: []  # No aditional mount points by default
 #   - id: mp0
 #     storage: local-lvm
 #     size: 16
 #     mount_point: "/mnt/data"
 #     acl: true
 #     quota: true
-#     backup: false
-#     skip_replication: false
-#     read_only: false
+#     backup: true
+#     skip_replication: true
+#     read_only: true
 #   - id: mp1
 #     storage: local-lvm
 #     size: 8
 #     mount_point: "/mnt/logs"
-
 
 ## Better put this in a vault
 root_password: 123testing1234

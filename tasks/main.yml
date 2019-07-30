@@ -8,7 +8,7 @@
     proxmox_hostname: "{{ inventory_hostname.split('.')[0] }}"
 
 - debug:
-    msg: "{{ proxmox_hostname }} - {{inventory_hostname}}"
+    msg: "{{ proxmox_hostname }} - {{ inventory_hostname }}"
     verbosity: 2
 
 # Verificar si python-pip está instalado en el nodo proxmox
@@ -49,7 +49,7 @@
       node: "{{ node }}"
       api_user: "{{ api_user }}"
       api_host: "{{ api_host }}"
-      api_password: "{{node_deploy_password}}"
+      api_password: "{{ node_deploy_password }}"
       src: "{{ descarga_ostemplate.dest }}"
       content_type: vztmpl
       state: present
@@ -99,7 +99,11 @@
 
 # Extraer el número de VM
 - name: Extract the ID of the VM from container var
-  shell: pct list | grep -w "{{ proxmox_hostname }}" | cut -f 1 -d ' '
+  shell: |
+    set -o pipefail
+    pct list | grep -w "{{ proxmox_hostname }}" | cut -f 1 -d ' '
+  args:
+    executable: /bin/bash
   delegate_to: "{{ api_host }}"
   register: VMID
   when: container is succeeded
@@ -122,16 +126,17 @@
     vmid: "{{ VMID.stdout }}"
     state: started
   delegate_to: "{{ api_host }}"
-  register: turned_on
+  #register: turned_on
+  notify: wait for connection
   when: (container is not defined) or (container is succeeded)
   tags:
     - deploy
 
 # Repintiendo ping cada 3s hasta que el el contenedor arranque
-- name: Repeating ping every 3 seconds until the container starts
-  wait_for_connection:
-    delay: 3
-    sleep: 3
-    timeout: 30
-  remote_user: root
-  when: turned_on.changed
+# - name: Repeating ping every 3 seconds until the container starts
+#   wait_for_connection:
+#     delay: 3
+#     sleep: 3
+#     timeout: 30
+#   remote_user: root
+#   when: turned_on.changed

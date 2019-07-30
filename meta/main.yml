@@ -13,9 +13,6 @@ galaxy_info:
     - name: Debian
       versions:
         - stretch
-    - name: Proxmox
-      versions:
-        - 5
 
   galaxy_tags:
     - system

@@ -116,6 +116,11 @@
   tags:
     - deploy
 
+# Configurar la interfaz tun en el LXC (Opcional)
+- name: Configure tun interface in the LXC (Optional)
+  include_tasks: tun_interface.yml
+  when: activate_lxc_tun_iface | bool
+
 # Arrancar el contenedor
 - name: Turn on the container
   proxmox:
@@ -131,12 +136,3 @@
   when: (container is not defined) or (container is succeeded)
   tags:
     - deploy
-
-# Repintiendo ping cada 3s hasta que el el contenedor arranque
-# - name: Repeating ping every 3 seconds until the container starts
-#   wait_for_connection:
-#     delay: 3
-#     sleep: 3
-#     timeout: 30
-#   remote_user: root
-#   when: turned_on.changed

@@ -58,3 +58,6 @@ root_password: 123testing1234
 
 ## Start the container when node boot. It is recommended setting in 'yes' when container is in production
 onboot: no
+
+## Configure the tun interface in the LXC container
+activate_lxc_tun_iface: False

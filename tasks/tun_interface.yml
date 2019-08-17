@@ -1,9 +1,0 @@
----
-## Optional configuration of tun interface in the LXC
-
-- name: Configure /etc/pve/lxc/<VMID>.conf in the node
-  lineinfile:
-    path: /etc/pve/lxc/{{ VMID.stdout }}.conf
-    regexp: '^lxc.cgroup.devices.allow'
-    line: 'lxc.cgroup.devices.allow = c 10:200 rwm\nlxc.hook.autodev = sh -c "modprobe tun; cd ${LXC_ROOTFS_MOUNT}/dev; mkdir net; mknod net/tun c 10 200; chmod 0666 net/tun"'
-  delegate_to: "{{ api_host }}"

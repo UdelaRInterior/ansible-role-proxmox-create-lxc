@@ -70,8 +70,6 @@
     password: "{{ root_password }}"
     pubkey: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
     cores: "{{ cores }}"
-    # cpus: "{{ cpu_limit | default(1) }}"
-    # cpuunits: "{{ cpu_units | default(1000) }}"
     cpus: "{{ cpu_limit | default(omit) }}"
     cpuunits: "{{ cpu_units | default(omit) }}"
     memory: "{{ memory }}"
@@ -131,12 +129,3 @@
   when: (container is not defined) or (container is succeeded)
   tags:
     - deploy
-
-# Repintiendo ping cada 3s hasta que el el contenedor arranque
-# - name: Repeating ping every 3 seconds until the container starts
-#   wait_for_connection:
-#     delay: 3
-#     sleep: 3
-#     timeout: 30
-#   remote_user: root
-#   when: turned_on.changed

@@ -7,12 +7,12 @@ api_host: my_node.my_cluster.org
 api_user: deploy@pam
 node_deploy_password: D3pl0y_pwd
 url_ostemplate: http://download.proxmox.com/images/system/debian-10.0-standard_10.0-1_amd64.tar.gz
-# unprivileged: true
+# unprivileged: true    # Optional.
 cores: 1
-# cpu_limit: 1
-# cpu_units: 1000
+# cpu_limit: 1          # Optional.
+# cpu_units: 1000       # Optional.
 memory: 512
-# swap: 512
+# swap: 512             # Optional.
 disk: 32
 storage: local-lvm
 nameserver: 192.168.8.8 192.168.8.4
@@ -20,21 +20,20 @@ nameserver: 192.168.8.8 192.168.8.4
 net_interfaces:
   - id: net0
     name: eth0
-    hwaddr: F6:A2:69:61:94:8D
-    ip4: 192.168.33.10        # ip4: dhcp (to use DHCP)
-    netmask4: 24
-    gw4: 192.168.33.1
-    ip6: 200:db8::10          # ip6: dhcp  (to use DHCP)  ### ip6: auto (to use SLAAC)
-    netmask6: 64
-    gw6: 200:db8::1
+    hwaddr: F6:A2:69:61:94:8D   # Optional. If not indicated, Proxmox will assign one automatically.
+    ip4: 192.168.33.10          # Optional. Available options: valid IPv4 address (to use static) - dhcp (to use DHCP)
+    netmask4: 24                # Optional if IPv4 not indicated.
+    gw4: 192.168.33.1           # Optional.
+    ip6: 200:db8::10            # Optional. Available options: valid IPv6 address (to use static) - dhcp (to use DHCP) - auto (to use SLAAC)
+    netmask6: 64                # Optional if IPv6 not indicated.
+    gw6: 200:db8::1             # Optional.
     bridge: vmbr0
-    firewall: false  # Setting netif_firewall in TRUE, enable the use of firewall on the network interface
-    rate_limit: 5    # In MB/s
-    vlan_tag: 200
+    firewall: false             # Optional. # Setting netif_firewall in TRUE, enable the use of firewall on the network interface
+    rate_limit: 5               # Optional. (In MB/s)
+    vlan_tag: 200               # Optional.
   - id: net1
     name: eth1
-    hwaddr: C6:A5:19:B1:92:7D
-    ip6: 200:db8::10          # ip6: dhcp  (to use DHCP)  ### ip6: auto (to use SLAAC)
+    ip6: 200:db8::10
     netmask6: 64
     bridge: vmbr1
 
@@ -43,11 +42,11 @@ mounts: []  # No aditional mount points by default
 #     storage: local-lvm
 #     size: 16
 #     mount_point: "/mnt/data"
-#     acl: true
-#     quota: true
-#     backup: true
-#     skip_replication: true
-#     read_only: true
+#     acl: true                     # Optional.
+#     quota: true                   # Optional.
+#     backup: true                  # Optional.
+#     skip_replication: true        # Optional.
+#     read_only: true               # Optional.
 #   - id: mp1
 #     storage: local-lvm
 #     size: 8

@@ -1,4 +1,5 @@
 galaxy_info:
+  role_name: proxmox_create_lxc
   author:
     - 'Daniel Viñar (@ulvida)'
     - 'Santiago Martínez (@santiagomr)'

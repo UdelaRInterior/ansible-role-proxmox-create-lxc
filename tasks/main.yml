@@ -7,10 +7,6 @@
   set_fact:
     proxmox_hostname: "{{ inventory_hostname.split('.')[0] }}"
 
-- debug:
-    msg: "{{ proxmox_hostname }} - {{ inventory_hostname }}"
-    verbosity: 2
-
 # Verificar si python-pip está instalado en el nodo proxmox
 - name: Verify that python-pip is installed in the Proxmox node
   apt:
@@ -32,13 +28,6 @@
     dest: /var/lib/vz/template/cache/
   delegate_to: "{{ api_host }}"
   register: descarga_ostemplate
-  tags:
-    - descarga
-    - download
-
-- debug:
-    var: descarga_ostemplate
-    verbosity: 2
   tags:
     - descarga
     - download
@@ -90,11 +79,6 @@
   delegate_to: "{{ api_host }}"
   register: container
 
-# Mirá el número de la VM
-- name: Show the ID of the VM
-  debug:
-    var: container
-
 # Extraer el número de VM
 - name: Extract the ID of the VM from container var
   shell: |
@@ -109,11 +93,6 @@
   tags:
     - deploy
 
-- debug:
-    var: VMID
-  tags:
-    - deploy
-
 # Arrancar el contenedor
 - name: Turn on the container
   proxmox:
@@ -124,7 +103,6 @@
     vmid: "{{ VMID.stdout }}"
     state: started
   delegate_to: "{{ api_host }}"
-  #register: turned_on
   notify: wait for connection
   when: (container is not defined) or (container is succeeded)
   tags:

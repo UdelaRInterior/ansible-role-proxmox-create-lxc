@@ -93,6 +93,19 @@
   tags:
     - deploy
 
+# Establece configuraciones adicionales no manejadas por el módulo proxmox.
+  # Se utiliza shell en lugar de (por ejemplo) lineinfile debido a que Ansible
+  # no logra reemplazar los archivos de configuración ubicados en /etc/pve/...
+# It establishes additional configurations not handled by the proxmox module.
+  # Shell is used instead of (for example) lineinfile because Ansible fails to
+  # replace the configuration files located in /etc/pve/...
+# See https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/issues/8
+- name: Additional configurations
+  shell: echo '{{ item }}' >> /etc/pve/nodes/{{ node }}/lxc/{{ VMID.stdout }}.conf
+  with_items: "{{ pve_additional_conf }}"
+  when: (pve_additional_conf is defined) and (container.changed | bool)
+  delegate_to: "{{ api_host }}"
+
 # Arrancar el contenedor
 - name: Turn on the container
   proxmox:

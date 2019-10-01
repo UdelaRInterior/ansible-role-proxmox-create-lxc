@@ -17,6 +17,12 @@ disk: 32
 storage: local-lvm
 nameserver: 192.168.8.8 192.168.8.4
 
+## Better put this in a vault
+root_password: 123testing1234
+
+## Start the container when node boot. It is recommended setting in 'yes' when container is in production
+onboot: no
+
 net_interfaces:
   - id: net0
     name: eth0
@@ -59,9 +65,3 @@ pve_additional_conf: []
         # tun device for OpenVPN server inside LXC
   # - 'lxc.cgroup.devices.allow = c 10:200 rwm'
   # - 'lxc.hook.autodev = sh -c "modprobe tun; cd ${LXC_ROOTFS_MOUNT}/dev; mkdir net; mknod net/tun c 10 200; chmod 0666 net/tun"'
-
-## Better put this in a vault
-root_password: 123testing1234
-
-## Start the container when node boot. It is recommended setting in 'yes' when container is in production
-onboot: no

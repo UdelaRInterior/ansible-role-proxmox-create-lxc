@@ -52,6 +52,8 @@ swap: 512
 disk: 32
 storage: local-lvm
 nameserver: 192.168.8.8 192.168.8.4
+root_password: 123testing1234
+onboot: no
 
 net_interfaces:
   - id: net0
@@ -89,9 +91,13 @@ mounts:
     size: 8
     mount_point: "/mnt/logs"
 
-root_password: 123testing1234
-
-onboot: no
+# Additional "manual" settings to add to the file /etc/pve/nodes/{{ node }}/lxc/{{ VMID }}.conf
+pve_additional_conf: []
+        # Kernel modules available within the LXC
+  # - 'mp0: /lib/modules/4.15.18-9-pve,mp=/lib/modules/4.15.18-9-pve,ro=1'
+        # tun device for OpenVPN server inside LXC
+  # - 'lxc.cgroup.devices.allow = c 10:200 rwm'
+  # - 'lxc.hook.autodev = sh -c "modprobe tun; cd ${LXC_ROOTFS_MOUNT}/dev; mkdir net; mknod net/tun c 10 200; chmod 0666 net/tun"'
 ```
 
 Dependencies

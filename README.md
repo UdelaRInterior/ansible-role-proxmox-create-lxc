@@ -81,11 +81,11 @@ mounts:
     storage: local-lvm
     size: 16
     mount_point: "/mnt/data"
-    acl: true
-    quota: true
-    backup: true
-    skip_replication: true
-    read_only: true
+    acl: false                     # Optional.
+    quota: false                   # Optional.
+    backup: false                  # Optional.
+    skip_replication: false        # Optional.
+    read_only: false               # Optional.
   - id: mp1
     storage: local-lvm
     size: 8

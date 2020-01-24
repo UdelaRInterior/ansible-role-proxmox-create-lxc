@@ -76,6 +76,7 @@
     nameserver: "{{ nameserver }}"
     onboot: "{{ onboot | default(omit) }}"
     unprivileged: "{{ unprivileged | default(omit) }}"
+    timeout: "{{ proxmox_create_lxc_timeout | default(omit) }}"
   delegate_to: "{{ api_host }}"
   register: container
 

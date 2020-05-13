@@ -1,5 +1,9 @@
 # Change Log
 
+## [v2.2.0](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/tree/v2.2.0)
+
+* Now you can change the timeout for operations of the Ansible module `proxmox` according to the performance of your remote host. `proxmox_create_lxc_timeout` variable was added for this purpose.
+
 ## [v2.1.0](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/tree/v2.1.0)
 
 * New variable `pve_additional_conf`. Simple list to indicate lines that should be added to the container configuration file ( `{{VMID}}.conf` ) at the time of creation. This is because they aren't possible configurations through the API and the Ansible's Proxmox module.

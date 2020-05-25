@@ -1,7 +1,9 @@
 Ansible role proxmox_create_lxc
 =========
 
- A complete role for LXC container creation in a Proxmox Virtual Environement (PVE) cluster, with network fully configured and eventually several disks with acl and quotas management.
+[![Galaxy](https://img.shields.io/badge/galaxy-UdelaRInterior.proxmox__create__lxc-blue.svg)](https://galaxy.ansible.com/udelarinterior/proxmox_create_lxc) ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/udelarinterior/ansible-role-proxmox-create-lxc?label=release&logo=github&style=social) ![GitHub stars](https://img.shields.io/github/stars/udelarinterior/ansible-role-proxmox-create-lxc?style=social) ![GitHub forks](https://img.shields.io/github/forks/udelarinterior/ansible-role-proxmox-create-lxc?style=social)
+
+A complete role for LXC container creation in a Proxmox Virtual Environement (PVE) cluster, with network fully configured and eventually several disks with acl and quotas management.
 
 Requirements
 ------------
@@ -14,22 +16,26 @@ Yo also need an SSH key configured in the local machine, where ansible is ran, i
 Installation
 ------------
 
+```shell
+$ ansible-galaxy install udelarinterior.proxmox_create_lxc
+```
+
 To be able to update later and eventually to modify it, prefer using `requirements.yml` with the git source:
 
 ```yaml
-- name: create_lxc
+- name: udelarinterior.proxmox_create_lxc
   src: https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc.git
-  ```
+```
 And then download it with `ansible-galaxy`:
 
 ```shell
 $ ansible-galaxy install -r requirements.yml
 ```
 
-Using `git`, you'll have to be carefull to folder name :
+Using `git`, you'll have to be carefull to folder name:
 
 ```shell
-$ git clone https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc.git create_lxc
+$ git clone https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc.git udelarinterior.proxmox_create_lxc
 ```
 
 Role Variables
@@ -92,10 +98,7 @@ mounts:
     mount_point: "/mnt/logs"
 
 # You can change the timeout for the operations of the module according to the performance of your remote host
-# proxmox_create_lxc_timeout: 30 
-
-# You can change the timeout for the operations of the module according to the performance of your remote host
-# proxmox_create_lxc_timeout: 30 
+# proxmox_create_lxc_timeout: 30
 
 # Additional "manual" settings to add to the file /etc/pve/nodes/{{ node }}/lxc/{{ VMID }}.conf
 pve_additional_conf: []

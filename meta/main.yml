@@ -1,8 +1,6 @@
 galaxy_info:
   role_name: proxmox_create_lxc
-  author:
-    - 'Daniel Viñar (@ulvida)'
-    - 'Santiago Martínez (@santiagomr)'
+  author: 'Daniel Viñar (@ulvida) and Santiago Martínez (@santiagomr)'
   description: Create LXC containers in Proxmox cluster
   company: Red Unidades Informáticas UdelaR Interior (@UdelaRInterior)
 

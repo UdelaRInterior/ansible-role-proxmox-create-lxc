@@ -41,7 +41,11 @@ $ git clone https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc.gi
 Role Variables
 --------------
 
-The `defaults` variables define the container parameters. To be specified by host under `host_vars/host_fqdn/vars` and eventually encrypted in `host_vars/host_fqdn/vault`
+The `defaults` variables define the container parameters. To be specified by host under `host_vars/host_fqdn/vars` and eventually encrypted in `host_vars/host_fqdn/vault`.
+
+New interface in v3.0.0, with all role variables defined in the `pve_lxc_*` namespace. Update your host variables in your ansible code!
+
+To give time to update your whole inventory, the role preserves backward compatibility with [previous interface](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/blob/v2.2.0/README.md#role-variables) up to v4.X.Y release. 
 
 ```yaml
 pve_lxc_hostname: "{{ inventory_hostname.split('.')[0] }}"
@@ -53,6 +57,9 @@ pve_lxc_api_host: my_node.my_cluster.org
 pve_lxc_api_user: deploy@pam
 pve_lxc_node_deploy_password: D3pl0y_pwd
 pve_lxc_url_ostemplate: http://download.proxmox.com/images/system/debian-10.0-standard_10.0-1_amd64.tar.gz
+# pve_lxc_description: |
+#   Host is a test container. 
+#   Configured with onboot: no.
 pve_lxc_unprivileged: true
 pve_lxc_cores: 1
 pve_lxc_cpu_limit: 1

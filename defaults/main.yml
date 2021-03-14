@@ -18,6 +18,9 @@ pve_lxc_node_deploy_password: "{{ node_deploy_password if node_deploy_password i
 # url_ostemplate: http://download.proxmox.com/images/system/debian-10.0-standard_10.0-1_amd64.tar.gz
 pve_lxc_url_ostemplate: "{{ url_ostemplate if url_ostemplate is defined else 'http://download.proxmox.com/images/system/debian-10.0-standard_10.0-1_amd64.tar.gz' }}"
 # pve_lxc_unprivileged: true    # Optional.
+# pve_lxc_description: |
+#   Host is a test container. 
+#   Configured with onboot: no.
 # cores: 1
 pve_lxc_cores: "{{ cores if cores is defined else '1' }}"
 # pve_lxc_cpu_limit: 1          # Optional.

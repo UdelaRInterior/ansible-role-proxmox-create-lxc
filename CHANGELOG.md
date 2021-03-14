@@ -1,5 +1,10 @@
 # Change Log
 
+## [v3.0.0](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/tree/v3.0.0)
+
+* New interface with all role variables defined in the `pve_lxc_*` namespace. Update your host variables in your ansible code!
+* Backwards compatibility with [previous interface](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/blob/v2.2.0/README.md#role-variables) up to v4.X.Y release 
+
 ## [v2.2.0](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/tree/v2.2.0)
 
 * Now you can change the timeout for operations of the Ansible module `proxmox` according to the performance of your remote host. `proxmox_create_lxc_timeout` variable was added for this purpose.

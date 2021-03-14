@@ -53,7 +53,8 @@
     ostemplate: "local:vztmpl/{{ pve_lxc_url_ostemplate | urlsplit('path') | basename }}"
     password: "{{ pve_lxc_root_password }}"
     pubkey: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
-    description: "{{ pve_lxc_description | default(omit) }}"
+    # to be abled for ansible 2.10 compatible version
+    # description: "{{ pve_lxc_description | default(omit) }}"
     cores: "{{ pve_lxc_cores }}"
     cpus: "{{ pve_lxc_cpu_limit | default(omit) }}"
     cpuunits: "{{ pve_lxc_cpu_units | default(omit) }}"

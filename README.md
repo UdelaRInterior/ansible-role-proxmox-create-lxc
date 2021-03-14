@@ -57,6 +57,7 @@ pve_lxc_api_host: my_node.my_cluster.org
 pve_lxc_api_user: deploy@pam
 pve_lxc_node_deploy_password: D3pl0y_pwd
 pve_lxc_url_ostemplate: http://download.proxmox.com/images/system/debian-10.0-standard_10.0-1_amd64.tar.gz
+## to be enabled for ansible 2.10
 # pve_lxc_description: |
 #   Host is a test container. 
 #   Configured with onboot: no.

@@ -3,7 +3,7 @@ Ansible role proxmox_create_lxc
 
 [![Galaxy](https://img.shields.io/badge/galaxy-UdelaRInterior.proxmox__create__lxc-blue.svg)](https://galaxy.ansible.com/udelarinterior/proxmox_create_lxc) ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/udelarinterior/ansible-role-proxmox-create-lxc?label=release&logo=github&style=social) ![GitHub stars](https://img.shields.io/github/stars/udelarinterior/ansible-role-proxmox-create-lxc?style=social) ![GitHub forks](https://img.shields.io/github/forks/udelarinterior/ansible-role-proxmox-create-lxc?style=social)
 
-A complete role for LXC container creation in a Proxmox Virtual Environement (PVE) cluster, with network fully configured and eventually several disks with acl and quotas management.
+A complete role for LXC container creation in a Proxmox Virtual Environement (PVE) cluster, with network fully configured and eventually several disks with acl and quotas management. The role wraps the [community `proxmox` collection](https://docs.ansible.com/ansible/latest/collections/community/general/proxmox_module.html#parameter-description)
 
 Requirements
 ------------
@@ -44,24 +44,28 @@ Role Variables
 The `defaults` variables define the container parameters. To be specified by host under `host_vars/host_fqdn/vars` and eventually encrypted in `host_vars/host_fqdn/vault`
 
 ```yaml
-node: my_node
-api_host: my_node.my_cluster.org
-api_user: deploy@pam
-node_deploy_password: D3pl0y_pwd
-url_ostemplate: http://download.proxmox.com/images/system/debian-10.0-standard_10.0-1_amd64.tar.gz
-unprivileged: true
-cores: 1
-cpu_limit: 1
-cpu_units: 1000
-memory: 512
-swap: 512
-disk: 32
-storage: local-lvm
-nameserver: 192.168.8.8 192.168.8.4
-root_password: 123testing1234
-onboot: no
+pve_lxc_hostname: "{{ inventory_hostname.split('.')[0] }}"
+# By default, we suppose that `inventory_hostname` is the FQDN or the hostname of the host to create, so we set the variable to the hostname. 
+# You can arbitrarly define this hostname
 
-net_interfaces:
+pve_lxc_node: my_node
+pve_lxc_api_host: my_node.my_cluster.org
+pve_lxc_api_user: deploy@pam
+pve_lxc_node_deploy_password: D3pl0y_pwd
+pve_lxc_url_ostemplate: http://download.proxmox.com/images/system/debian-10.0-standard_10.0-1_amd64.tar.gz
+pve_lxc_unprivileged: true
+pve_lxc_cores: 1
+pve_lxc_cpu_limit: 1
+pve_lxc_cpu_units: 1000
+pve_lxc_memory: 512
+pve_lxc_swap: 512
+pve_lxc_disk: 32
+pve_lxc_storage: local-lvm
+pve_lxc_nameserver: 192.168.8.8 192.168.8.4
+pve_lxc_root_password: 123testing1234
+pve_lxc_onboot: no
+
+pve_lxc_net_interfaces:
   - id: net0
     name: eth0
     hwaddr: F6:A2:69:61:94:8D
@@ -82,7 +86,7 @@ net_interfaces:
     netmask6: 64
     bridge: vmbr1
 
-mounts:
+pve_lxc_mounts:
   - id: mp0
     storage: local-lvm
     size: 16
@@ -98,10 +102,10 @@ mounts:
     mount_point: "/mnt/logs"
 
 # You can change the timeout for the operations of the module according to the performance of your remote host
-# proxmox_create_lxc_timeout: 30
+# pve_lxc_create_timeout: 30
 
 # Additional "manual" settings to add to the file /etc/pve/nodes/{{ node }}/lxc/{{ VMID }}.conf
-pve_additional_conf: []
+pve_lxc_additional_conf: []
         # Kernel modules available within the LXC
   # - 'mp0: /lib/modules/4.15.18-9-pve,mp=/lib/modules/4.15.18-9-pve,ro=1'
         # tun device for OpenVPN server inside LXC
@@ -138,7 +142,7 @@ the following playbook creates all the containers declared in the `pve_container
       roles:
         - create_lxc
 
-will create and start the containers, and configure root access with the `root_password` defined and the ssh key of your local machine (`~/.ssh/id_rsa.pub`).
+will create and start the containers, and configure root access with the `pve_lxc_root_password` defined and the ssh key of your local machine (`~/.ssh/id_rsa.pub`).
 
 BE CAREFULL: contrairly to debian standard installation, Proxmox container templates let remote root SSH open.
 

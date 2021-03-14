@@ -3,9 +3,11 @@
 
 # Repintiendo ping cada 3s hasta que el el contenedor arranque
 # Repeating ping every 3 seconds until the container starts
-- name: wait for connection
+- name: pve_lxc wait for connection
   wait_for_connection:
     delay: 3
     sleep: 3
     timeout: 30
   remote_user: root
+
+...

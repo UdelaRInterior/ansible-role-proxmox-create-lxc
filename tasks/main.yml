@@ -7,21 +7,21 @@
   apt:
     name: python-pip
     state: present
-  delegate_to: "{{ pve_lxc_api_host }}"
+  delegate_to: "{{ pve_api_host }}"
 
 #  Verificar si el módulo proxmoxer de python está instalado
 - name: Verify if proxmoxer pip module is installed
   pip:
     name: proxmoxer
     state: present
-  delegate_to: "{{ pve_lxc_api_host }}"
+  delegate_to: "{{ pve_api_host }}"
 
 # Descargar la plantilla del contenedor
 - name: Download the container template
   get_url:
     url: "{{ pve_lxc_url_ostemplate }}"
     dest: /var/lib/vz/template/cache/
-  delegate_to: "{{ pve_lxc_api_host }}"
+  delegate_to: "{{ pve_api_host }}"
   register: pve_lxc_download_ostemplate
   tags:
     - descarga
@@ -30,14 +30,14 @@
 # Agregar template lxc del container al nodo
 - name: Add LXC container template to node
   proxmox_template:
-      node: "{{ pve_lxc_node }}"
-      api_user: "{{ pve_lxc_api_user }}"
-      api_host: "{{ pve_lxc_api_host }}"
-      api_password: "{{ pve_lxc_node_deploy_password }}"
+      node: "{{ pve_node }}"
+      api_user: "{{ pve_api_user }}"
+      api_host: "{{ pve_api_host }}"
+      api_password: "{{ pve_api_password }}"
       src: "{{ pve_lxc_download_ostemplate.dest }}"
       content_type: vztmpl
       state: present
-  delegate_to: "{{ pve_lxc_api_host }}"
+  delegate_to: "{{ pve_api_host }}"
   tags:
       - descarga
       - download
@@ -45,11 +45,11 @@
 # Creando el container
 - name: Create the container
   proxmox:
-    node: "{{ pve_lxc_node }}"
-    api_user: "{{ pve_lxc_api_user }}"
-    api_host: "{{ pve_lxc_api_host }}"
-    api_password: "{{ pve_lxc_node_deploy_password }}"
-    hostname: "{{ pve_lxc_hostname }}"
+    node: "{{ pve_node }}"
+    api_user: "{{ pve_api_user }}"
+    api_host: "{{ pve_api_host }}"
+    api_password: "{{ pve_api_password }}"
+    hostname: "{{ pve_hostname }}"
     ostemplate: "local:vztmpl/{{ pve_lxc_url_ostemplate | urlsplit('path') | basename }}"
     password: "{{ pve_lxc_root_password }}"
     pubkey: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
@@ -74,17 +74,17 @@
     onboot: "{{ pve_lxc_onboot | default(omit) }}"
     unprivileged: "{{ pve_lxc_unprivileged | default(omit) }}"
     timeout: "{{ pve_lxc_create_timeout | default(omit) }}"
-  delegate_to: "{{ pve_lxc_api_host }}"
+  delegate_to: "{{ pve_api_host }}"
   register: pve_lxc_create_container
 
 # Extraer el número de VM
 - name: Extract the ID of the VM from container var
   shell: |
     set -o pipefail
-    pct list | grep -w "{{ pve_lxc_hostname }}" | cut -f 1 -d ' '
+    pct list | grep -w "{{ pve_hostname }}" | cut -f 1 -d ' '
   args:
     executable: /bin/bash
-  delegate_to: "{{ pve_lxc_api_host }}"
+  delegate_to: "{{ pve_api_host }}"
   register: pve_lxc_VMID
   when: pve_lxc_create_container is succeeded
   changed_when: false
@@ -99,7 +99,7 @@
   # replace the configuration files located in /etc/pve/...
 # See https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/issues/8
 - name: Additional configurations
-  shell: echo '{{ item }}' >> /etc/pve/nodes/{{ pve_lxc_node }}/lxc/{{ pve_lxc_VMID.stdout }}.conf
+  shell: echo '{{ item }}' >> /etc/pve/nodes/{{ pve_node }}/lxc/{{ pve_lxc_VMID.stdout }}.conf
   with_items: "{{ pve_lxc_additional_conf }}"
   when: (pve_lxc_additional_conf is defined) and (pve_lxc_create_container | bool)
   delegate_to: "{{ api_host }}"
@@ -107,13 +107,13 @@
 # Arrancar el contenedor
 - name: Turn on the container
   proxmox:
-    node: "{{ pve_lxc_node }}"
-    api_user: "{{ pve_lxc_api_user }}"
-    api_host: "{{ pve_lxc_api_host }}"
-    api_password: "{{ pve_lxc_node_deploy_password }}"
+    node: "{{ pve_node }}"
+    api_user: "{{ pve_api_user }}"
+    api_host: "{{ pve_api_host }}"
+    api_password: "{{ pve_api_password }}"
     vmid: "{{ pve_lxc_VMID.stdout }}"
     state: started
-  delegate_to: "{{ pve_lxc_api_host }}"
+  delegate_to: "{{ pve_api_host }}"
   notify: pve_lxc wait for connection
   when: (pve_lxc_create_container is not defined) or (pve_lxc_create_container is succeeded)
   tags:

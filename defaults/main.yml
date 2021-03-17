@@ -2,19 +2,19 @@
 # defaults file for ansible-role-proxmox-create-lxc/
 # vars needed to define the parameters for the wraped proxmox api
 
-pve_lxc_hostname: "{{ inventory_hostname.split('.')[0] }}"
+pve_hostname: "{{ inventory_hostname.split('.')[0] }}"
 # By default, we suppose that `inventory_hostname` is the FQDN or the hostname of the host to create, so we set the variable to the hostname. 
 # You can arbitrarly define this hostname
 
 # node: my_node
-pve_lxc_node: "{{ node if node is defined else 'my_node' }}"
+pve_node: "{{ node if node is defined else 'my_node' }}"
 # api_host: my_node.my_cluster.org
-pve_lxc_api_host: "{{ api_host if api_host is defined else 'my_node.my_cluster.org' }}"
+pve_api_host: "{{ api_host if api_host is defined else 'my_node.my_cluster.org' }}"
 # api_user: deploy@pam
-pve_lxc_api_user: "{{ api_user if api_user is defined else 'deploy@pam' }}"
+pve_api_user: "{{ api_user if api_user is defined else 'deploy@pam' }}"
 ## Better put this in a vault
-# node_deploy_password: D3pl0y_pwd
-pve_lxc_node_deploy_password: "{{ node_deploy_password if node_deploy_password is defined else 'D3pl0y_pwd' }}" 
+# api_password: D3pl0y_pwd
+pve_api_password: "{{ node_deploy_password if node_deploy_password is defined else 'D3pl0y_pwd' }}" 
 # url_ostemplate: http://download.proxmox.com/images/system/debian-10.0-standard_10.0-1_amd64.tar.gz
 pve_lxc_url_ostemplate: "{{ url_ostemplate if url_ostemplate is defined else 'http://download.proxmox.com/images/system/debian-10.0-standard_10.0-1_amd64.tar.gz' }}"
 # pve_lxc_unprivileged: true    # Optional.

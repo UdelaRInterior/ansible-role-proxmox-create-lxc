@@ -48,14 +48,14 @@ New interface in v3.0.0, with all role variables defined in the `pve_lxc_*` name
 To give time to update your whole inventory, the role preserves backward compatibility with [previous interface](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/blob/v2.2.0/README.md#role-variables) up to v4.X.Y release. 
 
 ```yaml
-pve_lxc_hostname: "{{ inventory_hostname.split('.')[0] }}"
+pve_hostname: "{{ inventory_hostname.split('.')[0] }}"
 # By default, we suppose that `inventory_hostname` is the FQDN or the hostname of the host to create, so we set the variable to the hostname. 
 # You can arbitrarly define this hostname
 
-pve_lxc_node: my_node
-pve_lxc_api_host: my_node.my_cluster.org
-pve_lxc_api_user: deploy@pam
-pve_lxc_node_deploy_password: D3pl0y_pwd
+pve_node: my_node
+pve_api_host: my_node.my_cluster.org
+pve_api_user: deploy@pam
+pve_api_password: D3pl0y_pwd
 pve_lxc_url_ostemplate: http://download.proxmox.com/images/system/debian-10.0-standard_10.0-1_amd64.tar.gz
 ## to be enabled for ansible 2.10
 # pve_lxc_description: |

@@ -1,5 +1,9 @@
 # Change Log
 
+## [v3.0.1](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/tree/v3.0.1)
+
+* missing namspace prefix and bad replacement that prevented setting any additional conf, 
+
 ## [v3.0.0](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/tree/v3.0.0)
 
 * New interface with all role variables defined in the `pve_lxc_*` namespace. Update your host variables in your ansible code!

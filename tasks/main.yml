@@ -101,8 +101,8 @@
 - name: Additional configurations
   shell: echo '{{ item }}' >> /etc/pve/nodes/{{ pve_node }}/lxc/{{ pve_lxc_VMID.stdout }}.conf
   with_items: "{{ pve_lxc_additional_conf }}"
-  when: (pve_lxc_additional_conf is defined) and (pve_lxc_create_container | bool)
-  delegate_to: "{{ api_host }}"
+  when: (pve_lxc_additional_conf is defined) and (pve_lxc_create_container is changed)
+  delegate_to: "{{ pve_api_host }}"
 
 # Arrancar el contenedor
 - name: Turn on the container

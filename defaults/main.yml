@@ -6,88 +6,87 @@ pve_hostname: "{{ inventory_hostname.split('.')[0] }}"
 # By default, we suppose that `inventory_hostname` is the FQDN or the hostname of the host to create, so we set the variable to the hostname. 
 # You can arbitrarly define this hostname
 
-# node: my_node
-pve_node: "{{ node if node is defined else 'my_node' }}"
-# api_host: my_node.my_cluster.org
-pve_api_host: "{{ api_host if api_host is defined else 'my_node.my_cluster.org' }}"
-# api_user: deploy@pam
-pve_api_user: "{{ api_user if api_user is defined else 'deploy@pam' }}"
-## Better put this in a vault
-# api_password: D3pl0y_pwd
-pve_api_password: "{{ node_deploy_password if node_deploy_password is defined else 'D3pl0y_pwd' }}" 
-# url_ostemplate: http://download.proxmox.com/images/system/debian-10.0-standard_10.0-1_amd64.tar.gz
-pve_lxc_url_ostemplate: "{{ url_ostemplate if url_ostemplate is defined else 'http://download.proxmox.com/images/system/debian-10.0-standard_10.0-1_amd64.tar.gz' }}"
+# proxmox node where we create or manage an LXC container
+pve_node: my_node
+# api_host: Proxmox API DNS or IP where we manage the Proxmox cluster or node 
+pve_api_host: my_node.my_cluster.org
+# api_user: User to connect to the Proxmox cluster API
+pve_api_user: deploy@pam
+# Password for the previous API user
+## Better put this in a vault, this dummy example can only cause an error.
+pve_api_password: D3pl0y_pwd
+# Proxmos LXC template we use to create the container
+pve_lxc_url_ostemplate: 'http://download.proxmox.com/images/system/debian-10.0-standard_10.0-1_amd64.tar.gz'
 # pve_lxc_unprivileged: true    # Optional.
 ## to be enabled for ansible 2.10
 # pve_lxc_description: |
 #   Host is a test container. 
 #   Configured with onboot: no.
-# cores: 1
-pve_lxc_cores: "{{ cores if cores is defined else '1' }}"
+# cores: 1  # Optional
+pve_lxc_cores: '1'
 # pve_lxc_cpu_limit: 1          # Optional.
 # pve_lxc_cpu_units: 1000       # Optional.
-# memory: 512
-pve_lxc_memory: "{{ memory if memory is defined else '512' }}"
+# Memory we configure in proxmox for the LXC container 
+pve_lxc_memory: 512
 # pve_lxc_swap: 512             # Optional.
-# disk: 32
-pve_lxc_disk: "{{ disk if disk is defined else '32' }}"
-# storage: local-lvm
-pve_lxc_storage: "{{ storage if storage is defined else 'local-lvm' }}"
-# nameserver: 192.168.8.8 192.168.8.4
-pve_lxc_nameserver: "{{ nameserver if nameserver is defined else '192.168.8.8 192.168.8.4' }}"
+# Size (in Gb) of the main disk we configure for the LXC
+pve_lxc_disk: 32
+# storage: Proxmox storage where we configure the container disk
+pve_lxc_storage: local-lvm
+# nameserver: NS resolvers that will use the container
+pve_lxc_nameserver: 192.168.8.8 192.168.8.4
 
-## Better put this in a vault
-# root_password: 123testing1234
-pve_lxc_root_password: "{{ root_password if root_password is defined else '123testing1234'}}"
+# root's password of the container
+## Better put this in a vault, the role no longer gives a default value, to avoid unsecure containter creation
+# pve_lxc_root_password: 123testing1234
 
 ## Start the container when node boot. It is recommended setting in 'yes' when container is in production
 # onboot: no
 pve_lxc_onboot: no
 
 # net_interfaces:
-pve_lxc_net_interfaces: "{{ net_interfaces if net_interfaces is defined else pve_lxc_net_interfaces_default }}"
-pve_lxc_net_interfaces_default:
-  - id: net0
-    name: eth0
-    hwaddr: F6:A2:69:61:94:8D   # Optional. If not indicated, Proxmox will assign one automatically.
-    ip4: 192.168.33.10          # Optional. Available options: valid IPv4 address (to use static) - dhcp (to use DHCP)
-    netmask4: 24                # Optional if IPv4 not indicated.
-    gw4: 192.168.33.1           # Optional.
-    ip6: 200:db8::10            # Optional. Available options: valid IPv6 address (to use static) - dhcp (to use DHCP) - auto (to use SLAAC)
-    netmask6: 64                # Optional if IPv6 not indicated.
-    gw6: 200:db8::1             # Optional.
-    bridge: vmbr0
-    firewall: false             # Optional. # Setting netif_firewall in TRUE, enable the use of firewall on the network interface
-    rate_limit: 5               # Optional. (In MB/s)
-    vlan_tag: 200               # Optional.
-  - id: net1
-    name: eth1
-    ip6: 200:db8::10
-    netmask6: 64
-    bridge: vmbr1
+pve_lxc_net_interfaces: 
+- id: net0
+  name: eth0
+  hwaddr: F6:A2:69:61:94:8D   # Optional. If not indicated, Proxmox will assign one automatically.
+  ip4: 192.168.33.10          # Optional. Available options: valid IPv4 address (to use static) - dhcp (to use DHCP)
+  netmask4: 24                # Optional if IPv4 not indicated.
+  gw4: 192.168.33.1           # Optional.
+  ip6: 200:db8::10            # Optional. Available options: valid IPv6 address (to use static) - dhcp (to use DHCP) - auto (to use SLAAC)
+  netmask6: 64                # Optional if IPv6 not indicated.
+  gw6: 200:db8::1             # Optional.
+  bridge: vmbr0
+  firewall: false             # Optional. # Setting netif_firewall in TRUE, enable the use of firewall on the network interface
+  rate_limit: 5               # Optional. (In MB/s)
+  vlan_tag: 200               # Optional.
+- id: net1
+  name: eth1
+  ip6: 200:db8::10
+  netmask6: 64
+  bridge: vmbr1
 
 # mounts: []  # No aditional mount points by default
-pve_lxc_mounts: "{{ mounts if mounts is defined else '[]' }}"  # No aditional mount points by default
-#   - id: mp0
-#     storage: local-lvm
-#     size: 16
-#     mount_point: "/mnt/data"
-#     acl: false                     # Optional.
-#     quota: false                   # Optional.
-#     backup: false                  # Optional.
-#     skip_replication: false        # Optional.
-#     read_only: false               # Optional.
-#   - id: mp1
-#     storage: local-lvm
-#     size: 8
-#     mount_point: "/mnt/logs"
+pve_lxc_mounts: []  # No aditional mount points by default
+# - id: mp0
+#   storage: local-lvm
+#   size: 16
+#   mount_point: "/mnt/data"
+#   acl: false                     # Optional.
+#   quota: false                   # Optional.
+#   backup: false                  # Optional.
+#   skip_replication: false        # Optional.
+#   read_only: false               # Optional.
+# - id: mp1
+#   storage: local-lvm
+#   size: 8
+#   mount_point: "/mnt/logs"
 
 # You can change the timeout for the operations of the module according to the performance of your remote host
 # pve_lxc_create_timeout: 30 
 
 # Additional "manual" settings to add to the file /etc/pve/nodes/{{ node }}/lxc/{{ VMID }}.conf
 # pve_additional_conf: []
-pve_lxc_additional_conf: "{{ pve_additional_conf if pve_additional_conf is defined else '[]' }}"
+pve_lxc_additional_conf: []
         # Kernel modules available within the LXC
   # - 'mp0: /lib/modules/4.15.18-9-pve,mp=/lib/modules/4.15.18-9-pve,ro=1'
         # tun device for OpenVPN server inside LXC

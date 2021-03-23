@@ -1,8 +1,13 @@
 # Change Log
 
+## [v4.0.0](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/tree/v4.0.0)
+
+* End of v2.0.0 variables' API backward's compatibility, no longer needed and not considered clean code
+* The new variable's API no longer provides a default value of root's container password (`pve_lxc_root_password`) to avoid unsecure container creation 
+
 ## [v3.0.1](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/tree/v3.0.1)
 
-* missing namspace prefix and bad replacement that prevented setting any additional conf, 
+* missing namspace prefix and bad replacement that prevented setting any additional conf
 
 ## [v3.0.0](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/tree/v3.0.0)
 

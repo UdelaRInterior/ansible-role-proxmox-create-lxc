@@ -43,9 +43,7 @@ Role Variables
 
 The `defaults` variables define the container parameters. To be specified by host under `host_vars/host_fqdn/vars` and eventually encrypted in `host_vars/host_fqdn/vault`.
 
-New interface in v3.0.0, with all role variables defined in the `pve_lxc_*` namespace. Update your host variables in your ansible code!
-
-To give time to update your whole inventory, the role preserves backward compatibility with [previous interface](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/blob/v2.2.0/README.md#role-variables) up to v4.X.Y release. 
+New interface introduced in v3.0.0 is maintained, with role's variables defined in the `pve_*` namespace when they are shared between several Proxmox roles, and in the `pve_lxc_*` namespace when they are specific to th present one. The role is no longer backward's compatible with [v2.X.Y previous interface](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/blob/v2.2.0/README.md#role-variables) and the role gives no longer a default value to `pve_lxc_root_password` in order to avoid unsecure container creation.
 
 ```yaml
 pve_hostname: "{{ inventory_hostname.split('.')[0] }}"
@@ -70,44 +68,44 @@ pve_lxc_swap: 512
 pve_lxc_disk: 32
 pve_lxc_storage: local-lvm
 pve_lxc_nameserver: 192.168.8.8 192.168.8.4
-pve_lxc_root_password: 123testing1234
+# pve_lxc_root_password:  # no default value, put yours in a vault. 
 pve_lxc_onboot: no
 
 pve_lxc_net_interfaces:
-  - id: net0
-    name: eth0
-    hwaddr: F6:A2:69:61:94:8D
-    ip4: 192.168.33.10        # ip4: dhcp (to use DHCP)
-    netmask4: 24
-    gw4: 192.168.33.1
-    ip6: 200:db8::10          # ip6: dhcp  (to use DHCP)  ### ip6: auto (to use SLAAC)
-    netmask6: 64
-    gw6: 200:db8::1
-    bridge: vmbr0
-    firewall: false  # Setting netif_firewall in TRUE, enable the use of firewall on the network interface
-    rate_limit: 5    # In MB/s
-    vlan_tag: 200
-  - id: net1
-    name: eth1
-    hwaddr: C6:A5:19:B1:92:7D
-    ip6: 200:db8::10          # ip6: dhcp  (to use DHCP)  ### ip6: auto (to use SLAAC)
-    netmask6: 64
-    bridge: vmbr1
+- id: net0
+  name: eth0
+  hwaddr: F6:A2:69:61:94:8D
+  ip4: 192.168.33.10        # ip4: dhcp (to use DHCP)
+  netmask4: 24
+  gw4: 192.168.33.1
+  ip6: 200:db8::10          # ip6: dhcp  (to use DHCP)  ### ip6: auto (to use SLAAC)
+  netmask6: 64
+  gw6: 200:db8::1
+  bridge: vmbr0
+  firewall: false  # Setting netif_firewall in TRUE, enable the use of firewall on the network interface
+  rate_limit: 5    # In MB/s
+  vlan_tag: 200
+- id: net1
+  name: eth1
+  hwaddr: C6:A5:19:B1:92:7D
+  ip6: 200:db8::10          # ip6: dhcp  (to use DHCP)  ### ip6: auto (to use SLAAC)
+  netmask6: 64
+  bridge: vmbr1
 
-pve_lxc_mounts:
-  - id: mp0
-    storage: local-lvm
-    size: 16
-    mount_point: "/mnt/data"
-    acl: false                     # Optional.
-    quota: false                   # Optional.
-    backup: false                  # Optional.
-    skip_replication: false        # Optional.
-    read_only: false               # Optional.
-  - id: mp1
-    storage: local-lvm
-    size: 8
-    mount_point: "/mnt/logs"
+pve_lxc_mounts: []
+# - id: mp0
+#   storage: local-lvm
+#   size: 16
+#   mount_point: "/mnt/data"
+#   acl: false                     # Optional.
+#   quota: false                   # Optional.
+#   backup: false                  # Optional.
+#   skip_replication: false        # Optional.
+#   read_only: false               # Optional.
+# - id: mp1
+#   storage: local-lvm
+#   size: 8
+#   mount_point: "/mnt/logs"
 
 # You can change the timeout for the operations of the module according to the performance of your remote host
 # pve_lxc_create_timeout: 30
@@ -126,7 +124,7 @@ Dependencies
 
 We need Ansible version > 2.5 (?) to have the appropriate API of Proxmox modules.
 
-Proxmox VE 5 installed in a the Proxmox node.
+Proxmox VE 5 or higher installed in a the Proxmox node or a cluster of several nodes.
 
 Example Playbook
 ----------------

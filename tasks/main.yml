@@ -1,67 +1,83 @@
 ---
-# proxmox_create_lxc: creation of a complete LXC container in Proxmox cluster
 # tasks file for ansible-role-proxmox-create-lxc/
+# proxmox_create_lxc: complete creation of a LXC container in a Proxmox VE node
 
-# Verificar si python-pip está instalado en el nodo proxmox
+# Verificar si python-pip está instalado en el nodo Proxmox
 - name: Verify that python-pip is installed in the Proxmox node
-  apt:
+  ansible.builtin.apt:
     name: python-pip
     state: present
   delegate_to: "{{ pve_api_host }}"
 
 #  Verificar si el módulo proxmoxer de python está instalado
 - name: Verify if proxmoxer pip module is installed
-  pip:
+  ansible.builtin.pip:
     name: proxmoxer
     state: present
   delegate_to: "{{ pve_api_host }}"
 
-# Descargar la plantilla del contenedor
-- name: Download the container template
+# Descargar la plantilla del contenedor si es necesario
+- name: Download the container template if it's needed
   get_url:
-    url: "{{ pve_lxc_url_ostemplate }}"
-    dest: /var/lib/vz/template/cache/
+    url: "{{ pve_lxc_ostemplate_url }}"
+    dest: /tmp/
   delegate_to: "{{ pve_api_host }}"
-  register: pve_lxc_download_ostemplate
+  register: pve_lxc_ostemplate_downloaded
+  when:
+    - pve_lxc_ostemplate_url is defined
+    - pve_lxc_ostemplate_name is not defined
   tags:
-    - descarga
-    - download
+    - pve_descarga
+    - pve_download
 
-# Agregar template lxc del container al nodo
+# Agregar el template LXC del contenedor al nodo
 - name: Add LXC container template to node
-  proxmox_template:
-      node: "{{ pve_node }}"
-      api_user: "{{ pve_api_user }}"
-      api_host: "{{ pve_api_host }}"
-      api_password: "{{ pve_api_password }}"
-      src: "{{ pve_lxc_download_ostemplate.dest }}"
-      content_type: vztmpl
-      state: present
+  community.general.proxmox_template:
+    node: "{{ pve_node }}"
+    api_host: "{{ pve_api_host }}"
+    api_user: "{{ pve_api_user | default(omit) }}"
+    api_password: "{{ pve_api_password | default(omit) }}"
+    api_token_id: "{{ pve_api_token_id | default(omit) }}"
+    api_token_secret: "{{ pve_api_token_secret | default(omit) }}"
+    template: "{{ pve_lxc_ostemplate_name | default(omit) }}"
+    src: "{{ pve_lxc_ostemplate_src if(pve_lxc_ostemplate_src is defined) else ( pve_lxc_ostemplate_downloaded.dest if(pve_lxc_ostemplate_downloaded.dest is defined) ) | default(omit) }}"
+    storage: "{{ pve_lxc_ostemplate_storage | default(omit) }}"
+    content_type: "{{ pve_lxc_ostemplate_content_type | default(omit) }}"
+    timeout: "{{ pve_lxc_ostemplate_timeout | default(omit) }}"
+    force: "{{ pve_lxc_ostemplate_force | default(omit) }}"
+    validate_certs: "{{ pve_lxc_ostemplate_validate_certs | default(omit) }}"
+    state: "{{ pve_lxc_ostemplate_state  | default(omit) }}"
   delegate_to: "{{ pve_api_host }}"
   tags:
-      - descarga
-      - download
+    - pve_descarga
+    - pve_download
 
 # Creando el container
 - name: Create the container
-  proxmox:
+  community.general.proxmox:
     node: "{{ pve_node }}"
-    api_user: "{{ pve_api_user }}"
     api_host: "{{ pve_api_host }}"
-    api_password: "{{ pve_api_password }}"
+    api_user: "{{ pve_api_user | default(omit) }}"
+    api_password: "{{ pve_api_password | default(omit) }}"
+    api_token_id: "{{ pve_api_token_id | default(omit) }}"
+    api_token_secret: "{{ pve_api_token_secret | default(omit) }}"
+    proxmox_default_behavior: "{{ pve_lxc_proxmox_default_behavior | default('compatibility') }}"
+    validate_certs: "{{ pve_lxc_validate_certs | default(omit) }}"
+    hookscript: "{{ pve_lxc_hookscript | default(omit) }}"
+    ostemplate: "{{ pve_lxc_ostemplate_storage | default('local') }}:{{ pve_lxc_ostemplate_content_type | default('vztmpl') }}/{{ pve_lxc_ostemplate_name if(pve_lxc_ostemplate_name is defined) else ( pve_lxc_ostemplate_url | urlsplit('path') | basename ) }}"
     hostname: "{{ pve_hostname }}"
-    ostemplate: "local:vztmpl/{{ pve_lxc_url_ostemplate | urlsplit('path') | basename }}"
+    vmid: "{{ pve_lxc_vmid | default(omit) }}"
+    description: "{{ pve_lxc_description | default(omit) }}"
     password: "{{ pve_lxc_root_password }}"
-    pubkey: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
-    # to be abled for ansible 2.10 compatible version
-    # description: "{{ pve_lxc_description | default(omit) }}"
-    cores: "{{ pve_lxc_cores }}"
+    pubkey: "{{ pve_lxc_root_authorized_pubkey | default(omit) }}"
+    cores: "{{ pve_lxc_cpu_cores | default(omit) }}"
     cpus: "{{ pve_lxc_cpu_limit | default(omit) }}"
     cpuunits: "{{ pve_lxc_cpu_units | default(omit) }}"
-    memory: "{{ pve_lxc_memory }}"
+    memory: "{{ pve_lxc_memory | default(omit) }}"
     swap: "{{ pve_lxc_swap | default(omit) }}"
-    storage: "{{ pve_lxc_storage }}"
-    disk: "{{ pve_lxc_disk }}"
+    storage: "{{ pve_lxc_storage | default(omit) }}"
+    disk: "{{ pve_lxc_disk | default(omit) }}"
+    ip_address: "{{ pve_lxc_ip_address | default(omit) }}"
     mounts: >-
       {   {%- for item in pve_lxc_mounts -%}
             "{{ item.id }}":"{{ item.storage|default('local-lvm') }}:{{ item.size|default(32) }},mp={{ item.mount_point|default('/mnt/mp0') }},{% if item.acl is defined %}{% if (item.acl) %}acl=1{% else %}acl=0{% endif %},{% endif %}{% if item.quota is defined and item.quota %}quota=1,{% endif %}{% if item.read_only is defined and item.read_only %}ro=1,{% endif %}{% if item.backup is defined and item.backup %}backup=1,{% endif %}{% if item.skip_replication is defined and item.skip_replication %}replicate=0{% endif %}",
@@ -70,53 +86,83 @@
       {   {%- for item in pve_lxc_net_interfaces -%}
             "{{ item.id }}":"name={{ item.name }},bridge={{ item.bridge }},{% if (item.hwaddr is defined) %}hwaddr={{ item.hwaddr }},{% endif %}{% if (item.ip4 is defined) %}ip={{ item.ip4 }}/{{ item.netmask4 }},{% endif %}{% if (item.gw4 is defined) %}gw={{ item.gw4 }},{% endif %}{% if (item.ip6 is defined) %}ip6={{ item.ip6 }}/{{ item.netmask6 }},{% endif %}{% if (item.gw6 is defined) %}gw6={{ item.gw6 }},{% endif %}{% if (item.firewall is defined and item.firewall) %}firewall=1,{% endif %}{% if (item.rate_limit is defined) %}rate={{ item.rate_limit }},{% endif %}{% if (item.vlan_tag is defined) %}tag={{ item.vlan_tag }}{% endif %}",
           {%- endfor -%}  }
-    nameserver: "{{ pve_lxc_nameserver }}"
+    nameserver: "{{ pve_lxc_nameserver | default(omit) }}"
+    searchdomain: "{{ pve_lxc_searchdomain | default(omit) }}"
     onboot: "{{ pve_lxc_onboot | default(omit) }}"
     unprivileged: "{{ pve_lxc_unprivileged | default(omit) }}"
-    timeout: "{{ pve_lxc_create_timeout | default(omit) }}"
+    features: "{{ pve_lxc_features | default(omit) }}"
+    timeout: "{{ pve_lxc_timeout | default(omit) }}"
+    force: "{{ pve_lxc_force | default(omit) }}"
   delegate_to: "{{ pve_api_host }}"
-  register: pve_lxc_create_container
+  register: pve_lxc_container_created
 
-# Extraer el número de VM
-- name: Extract the ID of the VM from container var
-  shell: |
+# Extraer el VMID del contenedor
+- name: Extract the container VMID
+  ansible.builtin.shell: |
     set -o pipefail
     pct list | grep -w "{{ pve_hostname }}" | cut -f 1 -d ' '
   args:
     executable: /bin/bash
-  delegate_to: "{{ pve_api_host }}"
-  register: pve_lxc_VMID
-  when: pve_lxc_create_container is succeeded
   changed_when: false
-  tags:
-    - deploy
+  delegate_to: "{{ pve_api_host }}"
+  register: pve_lxc_extracted_vmid
+  when:
+    - pve_lxc_vmid is not defined
+    - pve_lxc_container_created is succeeded
 
-# Establece configuraciones adicionales no manejadas por el módulo proxmox.
-  # Se utiliza shell en lugar de (por ejemplo) lineinfile debido a que Ansible
-  # no logra reemplazar los archivos de configuración ubicados en /etc/pve/...
-# It establishes additional configurations not handled by the proxmox module.
-  # Shell is used instead of (for example) lineinfile because Ansible fails to
-  # replace the configuration files located in /etc/pve/...
-# See https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/issues/8
-- name: Additional configurations
-  shell: echo '{{ item }}' >> /etc/pve/nodes/{{ pve_node }}/lxc/{{ pve_lxc_VMID.stdout }}.conf
-  with_items: "{{ pve_lxc_additional_conf }}"
-  when: (pve_lxc_additional_conf is defined) and (pve_lxc_create_container is changed)
+# Establecer variable con el VMID correspondiente para el contenedor en caso de que no haya sido definido
+- name: Set variable with the corresponding VMID for the container in case it has not been defined
+  ansible.builtin.set_fact:
+    pve_lxc_inferred_vmid: "{{ pve_lxc_vmid if (pve_lxc_vmid is defined) else pve_lxc_extracted_vmid.stdout }}"
+
+- block:
+  # Para las configuraciones que el módulo community.general.proxmox no cuente con un parámetro específico, esta
+  # tarea permite establecerlas modificando directamente el archivo de configuración del contenedor en su nodo
+  # For configurations that the community.general.proxmox module does not have a specific parameter, this
+  # task allows setting them by directly modifying the container configuration file in its node
+  - name: Additional configurations directly on the container .conf file
+    lineinfile:
+      unsafe_writes: yes # Otherwise Proxmox denies permission
+      path: /etc/pve/nodes/{{ pve_node }}/lxc/{{ pve_lxc_inferred_vmid }}.conf
+      regexp: "{{ item.regexp }}"
+      line: "{{ item.line }}"
+      state: "{{ item.state | default(omit) }}"
+    with_items: "{{ pve_lxc_additional_configurations }}"
+    register: pve_lxc_additional_configurations_result
+
+  # Apagar el contenedor si la configuración fue modificada para que la próxima tarea concrete un reinicio
+  # Este forma alternativa deber ser utilizada debido a que 'state: restarted' del módulo no inicia el
+  # contenedor si su estado previo era 'apagado', caso que se necesita (por ej.) cuando acaba de ser creado
+  # Shut down the container if the configuration was modified so that the next task will perform a reboot
+  # This workaround should be used because 'state: restarted' of the module does not start the
+  # container if its previous state was 'stopped', case that is needed (eg) when it has just been created
+  - name: Reboot (turn off and then turn on) the container if the configuration file was modified
+    community.general.proxmox:
+      node: "{{ pve_node }}"
+      api_host: "{{ pve_api_host }}"
+      api_user: "{{ pve_api_user | default(omit) }}"
+      api_password: "{{ pve_api_password | default(omit) }}"
+      api_token_id: "{{ pve_api_token_id | default(omit) }}"
+      api_token_secret: "{{ pve_api_token_secret | default(omit) }}"
+      vmid: "{{ pve_lxc_inferred_vmid }}"
+      state: stopped
+    when: pve_lxc_additional_configurations_result is changed
+  when: pve_lxc_additional_configurations is defined
   delegate_to: "{{ pve_api_host }}"
 
-# Arrancar el contenedor
-- name: Turn on the container
-  proxmox:
+# Asegurarse de que el contenedor esté encendido
+- name: Ensure the container is turned on
+  community.general.proxmox:
     node: "{{ pve_node }}"
-    api_user: "{{ pve_api_user }}"
     api_host: "{{ pve_api_host }}"
-    api_password: "{{ pve_api_password }}"
-    vmid: "{{ pve_lxc_VMID.stdout }}"
+    api_user: "{{ pve_api_user | default(omit) }}"
+    api_password: "{{ pve_api_password | default(omit) }}"
+    api_token_id: "{{ pve_api_token_id | default(omit) }}"
+    api_token_secret: "{{ pve_api_token_secret | default(omit) }}"
+    vmid: "{{ pve_lxc_inferred_vmid }}"
     state: started
   delegate_to: "{{ pve_api_host }}"
   notify: pve_lxc wait for connection
-  when: (pve_lxc_create_container is not defined) or (pve_lxc_create_container is succeeded)
-  tags:
-    - deploy
+  when: (pve_lxc_container_created is not defined) or (pve_lxc_container_created is succeeded)
 
 ...

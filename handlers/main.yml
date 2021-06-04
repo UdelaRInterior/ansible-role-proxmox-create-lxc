@@ -7,7 +7,7 @@
   wait_for_connection:
     delay: 3
     sleep: 3
-    timeout: 30
-  remote_user: root
+    timeout: "{{ pve_lxc_wait_for_connection_timeout | default(60) }}"
+  remote_user: "{{ pve_lxc_wait_for_connection_remote_user | default('root') }}"
 
 ...

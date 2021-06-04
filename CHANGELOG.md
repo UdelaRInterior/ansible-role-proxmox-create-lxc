@@ -1,18 +1,31 @@
 # Change Log
 
+## [v5.0.0](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/tree/v5.0.0)
+
+Updated to Ansible v2.10 (use of collections) and several improvements:
+* New method to import OS templates from the official repository provided by Proxmox, idempotent for directly using the `community.general.proxmox_template` module. The old method (reimplemented) is kept as a secondary option, which also allows the use of own or third-party template repositories.
+* Additional configurations are now idempotent and applicable to an existing container with the new variable `pve_lxc_additional_configurations`.
+* Implemented authentication in the PVE node via tokens.
+* Now there is a variable associated with each of the Proxmox modules parameters.
+* Tags `download` and` descarga` renamed to `pve_download` and` pve_descarga` respectively to avoid overlapping with other playbooks and roles due to being such a generic term.
+* Tag `deploy` removed for unclear use case.
+* Avoided with variables the use of numerous previously hardcoded and assumed values.
+* Numerous variables renamed to be mnemonic.
+* Unification of criteria for variable name prefixes.
+
 ## [v4.0.0](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/tree/v4.0.0)
 
-* End of v2.0.0 variables' API backward's compatibility, no longer needed and not considered clean code
-* The new variable's API no longer provides a default value of root's container password (`pve_lxc_root_password`) to avoid unsecure container creation 
+* End of v2.0.0 variables' API backward's compatibility, no longer needed and not considered clean code.
+* The new variable's API no longer provides a default value of root's container password (`pve_lxc_root_password`) to avoid unsecure container creation.
 
 ## [v3.0.1](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/tree/v3.0.1)
 
-* missing namspace prefix and bad replacement that prevented setting any additional conf
+* missing namspace prefix and bad replacement that prevented setting any additional conf.
 
 ## [v3.0.0](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/tree/v3.0.0)
 
 * New interface with all role variables defined in the `pve_lxc_*` namespace. Update your host variables in your ansible code!
-* Backwards compatibility with [previous interface](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/blob/v2.2.0/README.md#role-variables) up to v4.X.Y release 
+* Backwards compatibility with [previous interface](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/blob/v2.2.0/README.md#role-variables) up to v4.X.Y release.
 
 ## [v2.2.0](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/tree/v2.2.0)
 

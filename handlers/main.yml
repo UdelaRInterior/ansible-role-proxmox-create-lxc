@@ -9,5 +9,10 @@
     sleep: 3
     timeout: "{{ pve_lxc_wait_for_connection_timeout | default(60) }}"
   remote_user: "{{ pve_lxc_wait_for_connection_remote_user | default('root') }}"
+  when:
+    - pve_lxc_net_interfaces is defined
+    - pve_lxc_net_interfaces | length > 0
+    - pve_lxc_ip_address is defined
+
 
 ...

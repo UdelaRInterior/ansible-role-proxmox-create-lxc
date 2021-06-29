@@ -4,7 +4,7 @@
 # Repintiendo ping cada 3s hasta que el el contenedor arranque
 # Repeating ping every 3 seconds until the container starts
 - name: pve_lxc wait for connection
-  wait_for_connection:
+  ansible.builtin.wait_for_connection:
     delay: 3
     sleep: 3
     timeout: "{{ pve_lxc_wait_for_connection_timeout | default(60) }}"

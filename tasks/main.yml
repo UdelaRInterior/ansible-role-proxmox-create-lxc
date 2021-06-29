@@ -18,7 +18,7 @@
 
 # Descargar la plantilla del contenedor si es necesario
 - name: Download the container template if it's needed
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ pve_lxc_ostemplate_url }}"
     dest: /tmp/
   delegate_to: "{{ pve_api_host }}"
@@ -121,7 +121,7 @@
   # For configurations that the community.general.proxmox module does not have a specific parameter, this
   # task allows setting them by directly modifying the container configuration file in its node
   - name: Additional configurations directly on the container .conf file
-    lineinfile:
+    ansible.builtin.lineinfile:
       unsafe_writes: yes # Otherwise Proxmox denies permission
       path: /etc/pve/nodes/{{ pve_node }}/lxc/{{ pve_lxc_inferred_vmid }}.conf
       regexp: "{{ item.regexp }}"

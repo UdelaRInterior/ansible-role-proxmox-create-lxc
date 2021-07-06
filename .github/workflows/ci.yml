@@ -1,0 +1,23 @@
+# GitHub Actions docs
+# https://help.github.com/en/articles/about-github-actions
+# https://help.github.com/en/articles/workflow-syntax-for-github-actions
+
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    # Machine environment:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - name: install ansible-lint
+      run: |
+       pip3 install --upgrade setuptools wheel
+       pip3 install ansible==2.10
+       pip3 install ansible-lint
+    - uses: actions/checkout@v2
+    - name: lint role files
+      run: ~/.local/bin/ansible-lint -x 204 -v .

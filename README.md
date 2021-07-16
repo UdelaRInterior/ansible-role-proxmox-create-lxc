@@ -50,13 +50,15 @@ New interface introduced in v3.0.0 is maintained, with role's variables defined 
 ### Proxmox API connection and authentication section ###
 #########################################################
 
-# Various module options used to have default values. This cause problems when user expects different behavior from proxmox
-# by default or fill options which cause problems when they have been set. The default value is compatibility, which will
-# ensure that the default values are used when the values are not explicitly specified by the user.From community.general
-# 4.0.0 on, the default value will switch to no_defaults. To avoid deprecation warnings, please set proxmox_default_behavior
-# to an explicit value. This affects the disk, cores, cpus, memory, onboot, swap, cpuunits options.
-# See https://docs.ansible.com/ansible/latest/collections/community/general/proxmox_module.html#parameter-proxmox_default_behavior
-pve_lxc_proxmox_default_behavior: compatibility
+# Flag to determine the behavior of the variables default values
+  # Various module options used to have default values. This cause problems when user expects different behavior from proxmox
+  # by default or fill options which cause problems when they have been set. The default value is "compatibility", which will
+  # ensure that the default values are used when the values are not explicitly specified by the user.From community.general
+  # 4.0.0 on, the default value will switch to "no_defaults". To avoid deprecation warnings, please set proxmox_default_behavior
+  # to an explicit value. This affects the disk, cores, cpus, memory, onboot, swap, cpuunits options.
+  # See https://docs.ansible.com/ansible/latest/collections/community/general/proxmox_module.html#parameter-proxmox_default_behavior
+  # Choices: compatibility - no_defaults
+pve_default_behavior: compatibility
 
 # Proxmox node hostname where we create or manage an LXC container
 pve_node: mynode
@@ -72,6 +74,8 @@ pve_api_password: PaSsWd_f0r-AuToMaTi0nS    # Optional if token authentication i
 # pve_api_token_id: automations@pam!ansible                       # Optional if user-password based authentication is used
 # pve_api_token_secret: 0b029a23-1ca3-a93f-8d90-5a4c9d064199      # Optional if user-password based authentication is used
 
+# Validate the node's certificates when creating the container
+# pve_validate_certs: no                      # Optional.
 
 #####################################
 ### Container OS template section ###
@@ -88,7 +92,6 @@ pve_lxc_ostemplate_storage: local                                               
 pve_lxc_ostemplate_content_type: vztmpl                                               # Optional.
 pve_lxc_ostemplate_timeout: 60 # in seconds                                           # Optional.
 pve_lxc_ostemplate_force: no                                                          # Optional.
-pve_lxc_ostemplate_validate_certs: no                                                 # Optional.
 pve_lxc_ostemplate_state: present                                                     # Optional.
 
 
@@ -98,9 +101,6 @@ pve_lxc_ostemplate_state: present                                               
 
 # You can change the timeout for operations of the module according to the performance of your remote host
 pve_lxc_timeout: 30                             # Optional.
-
-# Validate the node's certificates when creating the container
-pve_lxc_validate_certs: no                      # Optional.
 
 # By default, we suppose that `inventory_hostname` is the FQDN or the hostname of the host to create, so we set the variable to the hostname.
 # You can arbitrarly define this hostname
@@ -131,7 +131,7 @@ pve_lxc_disk: 16                                  # Optional.
 pve_lxc_storage: local-lvm
 
 # Start the container when node boot. It is recommended setting in 'yes' when container is in production
-pve_lxc_onboot: no                                # Optional.
+pve_onboot: no                                    # Optional.
 
 # pve_lxc_ip_address: 192.168.33.10               # Optional.
 pve_lxc_nameserver: 1.1.1.1 1.0.0.1               # Optional.

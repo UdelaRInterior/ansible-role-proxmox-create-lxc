@@ -45,7 +45,7 @@
     content_type: "{{ pve_lxc_ostemplate_content_type | default(omit) }}"
     timeout: "{{ pve_lxc_ostemplate_timeout | default(omit) }}"
     force: "{{ pve_lxc_ostemplate_force | default(omit) }}"
-    validate_certs: "{{ pve_lxc_ostemplate_validate_certs | default(omit) }}"
+    validate_certs: "{{ pve_validate_certs | default(omit) }}"
     state: "{{ pve_lxc_ostemplate_state  | default(omit) }}"
   delegate_to: "{{ pve_api_host }}"
   tags:
@@ -61,8 +61,8 @@
     api_password: "{{ pve_api_password | default(omit) }}"
     api_token_id: "{{ pve_api_token_id | default(omit) }}"
     api_token_secret: "{{ pve_api_token_secret | default(omit) }}"
-    proxmox_default_behavior: "{{ pve_lxc_proxmox_default_behavior | default('compatibility') }}"
-    validate_certs: "{{ pve_lxc_validate_certs | default(omit) }}"
+    proxmox_default_behavior: "{{ pve_default_behavior | default('compatibility') }}"
+    validate_certs: "{{ pve_validate_certs | default(omit) }}"
     hookscript: "{{ pve_lxc_hookscript | default(omit) }}"
     ostemplate: "{{ pve_lxc_ostemplate_storage | default('local') }}:{{ pve_lxc_ostemplate_content_type | default('vztmpl') }}/{{ pve_lxc_ostemplate_name if(pve_lxc_ostemplate_name is defined) else ( pve_lxc_ostemplate_url | urlsplit('path') | basename ) }}"
     hostname: "{{ pve_hostname }}"
@@ -88,7 +88,7 @@
           {%- endfor -%}  }
     nameserver: "{{ pve_lxc_nameserver | default(omit) }}"
     searchdomain: "{{ pve_lxc_searchdomain | default(omit) }}"
-    onboot: "{{ pve_lxc_onboot | default(omit) }}"
+    onboot: "{{ pve_onboot | default(omit) }}"
     unprivileged: "{{ pve_lxc_unprivileged | default(omit) }}"
     features: "{{ pve_lxc_features | default(omit) }}"
     timeout: "{{ pve_lxc_timeout | default(omit) }}"

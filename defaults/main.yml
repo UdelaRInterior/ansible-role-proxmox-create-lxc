@@ -39,7 +39,7 @@ pve_api_password: PaSsWd_f0r-AuToMaTi0nS    # Optional if token authentication i
 
 # Proxmox LXC template we use to create the container
 # The name of an appliance container template (pveam)
-pve_lxc_ostemplate_name: debian-10.0-standard_10.0-1_amd64.tar.gz
+# pve_lxc_ostemplate_name: debian-10.0-standard_10.0-1_amd64.tar.gz                   # Optional.
     # Optional. It is used only if a name of an appliance container template (pveam) was not defined in the variable pve_lxc_ostemplate_name
 # pve_lxc_ostemplate_url: http://download.proxmox.com/images/system/debian-10.0-standard_10.0-1_amd64.tar.gz
 
@@ -64,35 +64,35 @@ pve_hostname: "{{ inventory_hostname.split('.')[0] }}"
 
 # pve_lxc_vmid: 200                               # Optional.
 
-pve_lxc_description: |                            # Optional.
-  This host is a Debian Buster example container configured via Ansible with:
-  - 1 CPU cores
-  - 512MB of RAM
-  - 16GB of system disk
-  - unprivileged: yes
-  - onboot: no
+# pve_lxc_description: |                            # Optional.
+#   This host is a Debian Buster example container configured via Ansible with:
+#   - 1 CPU cores
+#   - 512MB of RAM
+#   - 16GB of system disk
+#   - unprivileged: yes
+#   - onboot: no
 
 pve_lxc_root_password: # no default value for security reasons, put yours in a vault.
-pve_lxc_root_authorized_pubkey: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}" # Ansible controller default public key
+# pve_lxc_root_authorized_pubkey: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}" # Ansible controller default public key # Optional.
 
-pve_lxc_cpu_cores: 1                              # Optional.
+# pve_lxc_cpu_cores: 1                            # Optional.
 # pve_lxc_cpu_limit: 1                            # Optional.
 # pve_lxc_cpu_units: 1000                         # Optional.
 
-pve_lxc_memory: 512                               # Optional.
+# pve_lxc_memory: 512                             # Optional.
 # pve_lxc_swap: 512                               # Optional.
 
 # Size (in GB) of the main disk we configure for the LXC
-pve_lxc_disk: 16                                  # Optional.
-pve_lxc_storage: local-lvm
+# pve_lxc_disk: 16                                # Optional.
+# pve_lxc_storage: local-lvm                      # Optional.
 
 # Start the container when node boot. It is recommended setting in 'yes' when container is in production
-pve_onboot: no                                    # Optional.
+# pve_onboot: no                                  # Optional.
 
 # pve_lxc_ip_address: 192.168.33.10               # Optional.
-pve_lxc_nameserver: 1.1.1.1 1.0.0.1               # Optional.
+# pve_lxc_nameserver: 1.1.1.1 1.0.0.1             # Optional.
 # pve_lxc_searchdomain: mycluster.org             # Optional.
-pve_lxc_unprivileged: yes                         # Optional.
+# pve_lxc_unprivileged: yes                       # Optional.
 # pve_lxc_force: no                               # Optional.
 # pve_lxc_features:                               # Optional.
 #   - nesting=1

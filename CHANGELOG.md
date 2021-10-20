@@ -1,5 +1,11 @@
 # Change Log
 
+## [v5.0.0](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/tree/v5.0.1)
+
+* full alignment of namespace with proxmox_create_kvm roll. (API changes, but let's say its a fix of the API and maintain the major version number)
+* no default values for optional variables
+* Add CI workflow in GH Actions
+
 ## [v5.0.0](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/tree/v5.0.0)
 
 Updated to Ansible v2.10 (use of collections) and several improvements:

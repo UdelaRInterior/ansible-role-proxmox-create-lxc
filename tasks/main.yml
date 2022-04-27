@@ -100,7 +100,7 @@
 - name: Extract the container VMID
   ansible.builtin.shell: |
     set -o pipefail
-    pct list | grep -w "{{ pve_hostname }}" | cut -f 1 -d ' '
+    pvesh get nodes/{{ pve_node }}/lxc --output-format=json | sed 's/},{/}\n{/g' | grep -w "{{ pve_hostname }}" | grep -Po '("vmid":")\K[[:digit:]]+(?=")'
   args:
     executable: /bin/bash
   changed_when: false

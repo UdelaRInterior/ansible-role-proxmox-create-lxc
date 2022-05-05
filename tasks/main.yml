@@ -5,7 +5,7 @@
 # Verificar si python-pip está instalado en el nodo Proxmox
 - name: Verify that python-pip is installed in the Proxmox node
   ansible.builtin.apt:
-    name: python-pip
+    name: python3-pip
     state: present
   delegate_to: "{{ pve_api_host }}"
 

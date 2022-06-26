@@ -1,9 +1,13 @@
 # Change Log
 
-## [v5.0.0](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/tree/v5.0.1)
+## [v5.0.2](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/tree/v5.0.2)
 
-* full alignment of namespace with proxmox_create_kvm roll. (API changes, but let's say its a fix of the API and maintain the major version number)
-* no default values for optional variables
+* Installing the `python3-pip` package directly from apt instead of the ambiguous `python-pip`. This change allows the role to run correctly on all Proxmox versions supported (PVE >= 5), since `python3-pip` is available on all of them, but `python-pip` is not on the latest ones.
+
+## [v5.0.1](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/tree/v5.0.1)
+
+* Full alignment of namespace with proxmox_create_kvm roll. (API changes, but let's say its a fix of the API and maintain the major version number)
+* No default values for optional variables
 * Add CI workflow in GH Actions
 
 ## [v5.0.0](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/tree/v5.0.0)
@@ -26,7 +30,7 @@ Updated to Ansible v2.10 (use of collections) and several improvements:
 
 ## [v3.0.1](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/tree/v3.0.1)
 
-* missing namspace prefix and bad replacement that prevented setting any additional conf.
+* Missing namspace prefix and bad replacement that prevented setting any additional conf.
 
 ## [v3.0.0](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/tree/v3.0.0)
 

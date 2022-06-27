@@ -1,5 +1,9 @@
 # Change Log
 
+## [v5.1.0](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/tree/v5.1.0)
+
+* `pvesh get nodes/{{ pve_node }}/lxc` is now used to extract the container's VMID instead of the `pct list` command. Previously, if a container was created on `pve_node` != `pve_api_host`, it was impossible to extract the container VMID from the Proxmox node used to connect via API. Now with `pvesh get` it is possible.
+
 ## [v5.0.2](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/tree/v5.0.2)
 
 * Installing the `python3-pip` package directly from apt instead of the ambiguous `python-pip`. This change allows the role to run correctly on all Proxmox versions supported (PVE >= 5), since `python3-pip` is available on all of them, but `python-pip` is not on the latest ones.

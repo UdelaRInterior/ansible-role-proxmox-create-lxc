@@ -1,6 +1,13 @@
 # Change Log
 
+## Collection `cielito.proxmox` [v1.0.0](https://git.interior.edu.uy/cielito/proxmox/tree/v1.0.0)
+
+The role is migrated to the [`cielito.proxmox` collection](https://git.interior.edu.uy/cielito/proxmox/), this repository is deprecated, available read only for archives purposes. 
+
+
 ## [v5.1.0](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/tree/v5.1.0)
+
+## [v5.0.0](https://github.com/UdelaRInterior/ansible-role-proxmox-create-lxc/tree/v5.0.1)
 
 * `pvesh get nodes/{{ pve_node }}/lxc` is now used to extract the container's VMID instead of the `pct list` command. Previously, if a container was created on `pve_node` != `pve_api_host`, it was impossible to extract the container VMID from the Proxmox node used to connect via API. Now with `pvesh get` it is possible.
 

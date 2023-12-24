@@ -84,7 +84,7 @@
           {%- endfor -%}  }
     netif: >-
       {   {%- for item in pve_lxc_net_interfaces -%}
-            "{{ item.id }}":"name={{ item.name }},bridge={{ item.bridge }},{% if (item.hwaddr is defined) %}hwaddr={{ item.hwaddr }},{% endif %}{% if (item.ip4 is defined) %}ip={{ item.ip4 }}/{{ item.netmask4 }},{% endif %}{% if (item.gw4 is defined) %}gw={{ item.gw4 }},{% endif %}{% if (item.ip6 is defined) %}ip6={{ item.ip6 }}/{{ item.netmask6 }},{% endif %}{% if (item.gw6 is defined) %}gw6={{ item.gw6 }},{% endif %}{% if (item.firewall is defined and item.firewall) %}firewall=1,{% endif %}{% if (item.rate_limit is defined) %}rate={{ item.rate_limit }},{% endif %}{% if (item.vlan_tag is defined) %}tag={{ item.vlan_tag }}{% endif %}",
+            "{{ item.id }}":"name={{ item.name }},bridge={{ item.bridge }},{% if (item.hwaddr is defined) %}hwaddr={{ item.hwaddr }},{% endif %}{% if (item.ip4 is defined) %}ip={{ item.ip4 }}/{{ item.netmask4 }},{% endif %}{% if (item.gw4 is defined) %}gw={{ item.gw4 }},{% endif %}{% if (item.ip6 is defined) %}ip6={{ item.ip6 }}{% if (item.netmask6 is defined) %}/{{ item.netmask6 }}{% endif %},{% endif %}{% if (item.gw6 is defined) %}gw6={{ item.gw6 }},{% endif %}{% if (item.firewall is defined and item.firewall) %}firewall=1,{% endif %}{% if (item.rate_limit is defined) %}rate={{ item.rate_limit }},{% endif %}{% if (item.vlan_tag is defined) %}tag={{ item.vlan_tag }}{% endif %}",
           {%- endfor -%}  }
     nameserver: "{{ pve_lxc_nameserver | default(omit) }}"
     searchdomain: "{{ pve_lxc_searchdomain | default(omit) }}"
